@@ -36,5 +36,5 @@ VB="${VBITRATE:-1250k}"
 ffmpeg -hide_banner -loglevel error -y -i build/video.mp4 -i build/master.wav -i ../dist/anthropic-80b-paradox.srt \
   -map 0:v -map 1:a -map 2:s -c:v libx264 -preset slow -b:v "$VB" -maxrate 4000k -bufsize 8000k -tune film \
   -pix_fmt yuv420p -pass 2 -passlogfile build/x264pass -c:a aac -b:a 160k -ar 48000 \
-  -c:s mov_text -metadata:s:s:0 language=eng -metadata title="The \$80 Billion Paradox" -movflags +faststart -shortest "$OUT"
+  -c:s mov_text -metadata:s:s:0 language=eng -metadata title="The \$80 Billion Paradox" -movflags +faststart "$OUT"
 ffprobe -v error -show_entries format=duration,size -of default=nw=1 "$OUT"
