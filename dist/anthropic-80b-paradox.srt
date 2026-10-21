@@ -1,0 +1,495 @@
+1
+00:00:03,000 --> 00:00:09,342
+In May 2026, the CEO of Anthropic said something
+almost no CEO ever gets to say.
+
+2
+00:00:10,242 --> 00:00:15,945
+“We tried to plan very well for a world of 10x
+growth per year. And yet we saw 80x.”
+
+3
+00:00:17,545 --> 00:00:20,690
+Five months later, the same company revealed
+this number.
+
+4
+00:00:21,990 --> 00:00:25,594
+A loss of $80.7 billion. In six months.
+
+5
+00:00:26,794 --> 00:00:31,971
+But before we get to that number, you need to
+understand just how strong this company really
+is.
+
+6
+00:00:38,000 --> 00:00:39,479
+Exhibit one: speed.
+
+7
+00:00:40,279 --> 00:00:46,365
+At the start of 2025, Anthropic’s revenue was
+running at about $1 billion a year.
+
+8
+00:00:46,865 --> 00:00:48,980
+By the end of the year: $9 billion.
+
+9
+00:00:49,480 --> 00:00:53,315
+February: $14 billion. April: $30 billion. May:
+$47 billion.
+
+10
+00:00:53,815 --> 00:00:58,200
+And by the end of July, a run rate of $65
+billion a year.
+
+11
+00:00:59,100 --> 00:01:06,780
+Second-quarter revenue alone topped $11.5
+billion — nearly 15 times the same quarter a
+year earlier.
+
+12
+00:01:08,000 --> 00:01:10,217
+Exhibit two: it overtook the leader.
+
+13
+00:01:10,817 --> 00:01:15,230
+For years, OpenAI was the undisputed king of AI
+revenue.
+
+14
+00:01:15,230 --> 00:01:22,322
+By August, Anthropic’s run rate was reported at
+$65 billion. OpenAI’s: around $40 billion.
+
+15
+00:01:22,922 --> 00:01:33,142
+In May, investors valued Anthropic at $965
+billion — above OpenAI’s last price tag of $852
+billion.
+
+16
+00:01:36,000 --> 00:01:38,392
+Exhibit three: business runs on it.
+
+17
+00:01:38,992 --> 00:01:48,921
+In a survey by Menlo Ventures — itself an
+Anthropic investor — Anthropic took 40% of
+enterprise spending on AI models.
+
+18
+00:01:48,921 --> 00:01:51,024
+OpenAI: 27%. Google: 21%.
+
+19
+00:01:51,524 --> 00:01:53,972
+In coding, its share was 54%.
+
+20
+00:01:54,572 --> 00:02:01,824
+Customers paying more than $1 million a year
+doubled — from 500 to over 1,000 — in less than
+two months.
+
+21
+00:02:02,324 --> 00:02:08,020
+And its coding agent, Claude Code, became a
+multi-billion-dollar business almost overnight.
+
+22
+00:02:10,000 --> 00:02:12,712
+Exhibit four: the giants pay to be in the room.
+
+23
+00:02:13,312 --> 00:02:17,747
+Amazon. Google. Microsoft. Nvidia. All four are
+investors.
+
+24
+00:02:18,247 --> 00:02:25,473
+Amazon put in about $13 billion. By June, it
+valued that stake at roughly $190 billion.
+
+25
+00:02:25,973 --> 00:02:28,109
+And the compute is staggering:
+
+26
+00:02:28,109 --> 00:02:34,161
+up to a million Google TPUs, Amazon’s Project
+Rainier, a gigawatt on Microsoft Azure.
+
+27
+00:02:36,000 --> 00:02:38,313
+Exhibit five: it’s starting to make money.
+
+28
+00:02:38,913 --> 00:02:45,751
+In both of the first two quarters of 2026,
+Anthropic reported positive adjusted operating
+income.
+
+29
+00:02:48,000 --> 00:02:52,126
+Put it all together, and you get one of the
+fastest climbs in corporate history.
+
+30
+00:02:52,626 --> 00:02:55,870
+March 2025: $61.5 billion.
+
+31
+00:02:56,220 --> 00:02:57,828
+September: $183 billion.
+
+32
+00:02:58,178 --> 00:02:59,725
+February 2026: $380 billion.
+
+33
+00:03:00,075 --> 00:03:02,571
+May: $965 billion.
+
+34
+00:03:03,071 --> 00:03:06,481
+And now, talk of an IPO at up to $2 trillion.
+
+35
+00:03:12,000 --> 00:03:17,443
+Then came the draft IPO filing — and three
+numbers that made Wall Street do a double take.
+
+36
+00:03:18,243 --> 00:03:23,313
+Revenue, first half of 2026: $16.3 billion.
+
+37
+00:03:24,113 --> 00:03:26,830
+Net loss: $80.7 billion.
+
+38
+00:03:27,830 --> 00:03:33,491
+Cash and short-term investments at the end of
+2025: $20.28 billion.
+
+39
+00:03:34,491 --> 00:03:35,857
+Now do the scary math.
+
+40
+00:03:36,357 --> 00:03:41,434
+$80.7 billion in six months is about $13.5
+billion a month.
+
+41
+00:03:41,934 --> 00:03:45,789
+Twenty billion in the bank runs out in about 45
+days.
+
+42
+00:03:46,389 --> 00:03:51,495
+By that logic, the strongest company in AI
+should have been dead by Valentine’s Day.
+
+43
+00:03:52,695 --> 00:03:55,060
+So which is it? A rocket… or a bomb?
+
+44
+00:04:00,000 --> 00:04:02,642
+Let’s take that $80.7 billion apart.
+
+45
+00:04:03,242 --> 00:04:09,406
+About $72 billion of it is a single accounting
+line. And not one dollar of it left the company.
+
+46
+00:04:10,206 --> 00:04:15,582
+It comes from convertible notes: money investors
+put in that can later turn into shares.
+
+47
+00:04:16,182 --> 00:04:18,138
+Imagine a friend lends you $10.
+
+48
+00:04:18,138 --> 00:04:23,691
+Instead of paying it back in cash, you promise
+shares of your company, at today’s price.
+
+49
+00:04:24,191 --> 00:04:26,875
+Then your company becomes ten times more
+valuable.
+
+50
+00:04:27,275 --> 00:04:32,094
+Those shares are now worth $100. On paper, you
+owe your friend $100.
+
+51
+00:04:32,494 --> 00:04:37,208
+Accounting rules say that $90 jump is a loss.
+You didn’t spend a cent.
+
+52
+00:04:38,008 --> 00:04:39,414
+Now scale it up.
+
+53
+00:04:39,414 --> 00:04:46,707
+Anthropic’s valuation went from $380 billion to
+$965 billion in about three months.
+
+54
+00:04:47,207 --> 00:04:52,076
+Every leap in value made those notes more
+expensive — and the reported loss bigger.
+
+55
+00:04:52,576 --> 00:04:57,034
+In other words: the stronger Anthropic gets, the
+more money it appears to lose.
+
+56
+00:04:58,034 --> 00:05:01,288
+You can see the other side of this trade on
+Amazon’s books.
+
+57
+00:05:01,788 --> 00:05:08,435
+At the end of March, Amazon valued its Anthropic
+convertible notes at $42.2 billion.
+
+58
+00:05:08,435 --> 00:05:11,126
+By the end of June: $97.9 billion.
+
+59
+00:05:11,626 --> 00:05:18,194
+A $55.7 billion gain in a single quarter. Same
+notes. One company books a gain.
+
+60
+00:05:18,194 --> 00:05:19,690
+The other, a loss.
+
+61
+00:05:20,490 --> 00:05:21,835
+And it isn’t new.
+
+62
+00:05:21,835 --> 00:05:29,669
+Of Anthropic’s roughly $42 billion net loss in
+2025, about $34 billion was the same kind of
+charge.
+
+63
+00:05:30,269 --> 00:05:33,881
+Strip it out, and the $80 billion crater shrinks
+to under $9 billion.
+
+64
+00:05:34,681 --> 00:05:35,909
+So the loss is fake?
+
+65
+00:05:38,000 --> 00:05:39,026
+Not so fast.
+
+66
+00:05:39,626 --> 00:05:42,993
+Because there’s a number in the filing that is
+very, very real.
+
+67
+00:05:43,793 --> 00:05:44,440
+Compute.
+
+68
+00:05:44,440 --> 00:05:51,560
+In the first half of 2025, Anthropic spent $2.3
+billion on computing and infrastructure.
+
+69
+00:05:51,560 --> 00:05:54,149
+A year later: nearly $9 billion.
+
+70
+00:05:54,749 --> 00:05:56,834
+And that’s just the beginning.
+
+71
+00:05:56,834 --> 00:06:04,620
+The filing reportedly lists at least $518
+billion of AI-infrastructure commitments over
+roughly the next decade.
+
+72
+00:06:05,220 --> 00:06:07,488
+Google: $111 billion.
+
+73
+00:06:07,788 --> 00:06:10,106
+Amazon: $110 billion.
+
+74
+00:06:10,406 --> 00:06:12,420
+Microsoft: $31 billion.
+
+75
+00:06:12,720 --> 00:06:17,077
+Nvidia GPUs through smaller cloud providers:
+about $86 billion.
+
+76
+00:06:17,377 --> 00:06:21,651
+And equipment leases tied to Broadcom: $161
+billion.
+
+77
+00:06:22,251 --> 00:06:24,777
+Roughly 80% of it can’t be cancelled.
+
+78
+00:06:25,577 --> 00:06:27,128
+Now put the cash next to it.
+
+79
+00:06:28,528 --> 00:06:32,752
+$20.28 billion. The bill is about 25 times
+bigger.
+
+80
+00:06:34,152 --> 00:06:38,005
+To be fair, that cash figure is a December
+snapshot.
+
+81
+00:06:38,005 --> 00:06:44,674
+In 2026, Anthropic announced two more rounds:
+$30 billion in February, $65 billion in May.
+
+82
+00:06:45,174 --> 00:06:47,423
+Even so, that’s a fraction of the bill.
+
+83
+00:06:48,223 --> 00:06:50,843
+And look at who sits on both sides of the table.
+
+84
+00:06:51,343 --> 00:06:56,030
+Amazon and Google invest in Anthropic. Anthropic
+pays them for cloud.
+
+85
+00:06:56,030 --> 00:06:59,834
+Their stakes rise in value — and Anthropic books
+a loss.
+
+86
+00:07:00,434 --> 00:07:06,066
+The filing even warns that its cloud partners
+increasingly see Anthropic as a competitor.
+
+87
+00:07:06,666 --> 00:07:11,054
+And roughly a fifth to a quarter of its revenue
+came from just two customers.
+
+88
+00:07:14,000 --> 00:07:16,602
+So: is Anthropic strong, or fragile?
+
+89
+00:07:17,202 --> 00:07:18,889
+It depends on which lens you use.
+
+90
+00:07:19,489 --> 00:07:21,354
+Lens one: the income statement.
+
+91
+00:07:21,354 --> 00:07:26,587
+Here, success looks like failure — the higher
+the valuation, the bigger the paper loss.
+
+92
+00:07:27,187 --> 00:07:30,714
+Lens two: operations. Here, the engine is
+roaring.
+
+93
+00:07:30,714 --> 00:07:35,935
+Revenue is compounding, and adjusted operating
+income has turned positive.
+
+94
+00:07:36,535 --> 00:07:38,021
+Lens three: commitments.
+
+95
+00:07:38,021 --> 00:07:44,211
+Here is the real risk — a half-trillion-dollar
+bill that comes due whether customers show up or
+not.
+
+96
+00:07:45,011 --> 00:07:51,444
+The bulls see a company growing faster than
+almost anything in history, with demand that
+still outruns supply.
+
+97
+00:07:51,944 --> 00:07:58,470
+The bears see a fixed bill, concentrated
+customers, and suppliers who are also rivals.
+
+98
+00:07:58,470 --> 00:08:03,630
+One research firm says the whole company is
+worth just $144 billion.
+
+99
+00:08:04,229 --> 00:08:07,312
+And that is exactly why Anthropic is going
+public.
+
+100
+00:08:07,312 --> 00:08:12,059
+To keep paying for the future, it needs the
+deepest pool of capital on Earth.
+
+101
+00:08:16,000 --> 00:08:18,506
+So let’s look at those three numbers one more
+time.
+
+102
+00:08:19,306 --> 00:08:22,548
+$16.3 billion in revenue: real demand.
+
+103
+00:08:23,248 --> 00:08:27,937
+$80.7 billion in losses: mostly a side effect of
+success.
+
+104
+00:08:28,637 --> 00:08:32,771
+$20.28 billion in cash: a snapshot, not a
+runway.
+
+105
+00:08:33,971 --> 00:08:36,641
+Anthropic’s strength is real. So is the bill.
+
+106
+00:08:37,541 --> 00:08:40,297
+The only question is which one grows faster.

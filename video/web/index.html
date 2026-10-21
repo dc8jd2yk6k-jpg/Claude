@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The $80 Billion Paradox</title>
+<link rel="stylesheet" href="style.css">
+<script src="../node_modules/gsap/dist/gsap.min.js"></script>
+</head>
+<body>
+<div id="frame">
+  <div id="stage">
+    <canvas id="bg" width="1920" height="1080"></canvas>
+    <div id="shake"><div id="root"></div></div>
+    <canvas id="leak" width="1920" height="1080"></canvas>
+    <div id="hud">
+      <div class="tl mono"><div class="sq"></div><div class="lbl" style="position:relative;width:900px;height:22px"></div></div>
+      <div class="tr mono">The $80 Billion Paradox</div>
+      <div class="bl"></div>
+      <div class="br mono" id="tc"></div>
+      <div class="prog"><div class="fill"></div></div>
+    </div>
+    <div id="vignette"></div>
+  </div>
+  <div class="lb top"></div><div class="lb bot"></div>
+  <canvas id="grain" width="1920" height="1080"></canvas>
+  <div id="flash"></div>
+</div>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <filter id="glitch" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence id="gturb" type="fractalNoise" baseFrequency="0.00001 0.06" numOctaves="1" seed="1" result="noise"/>
+      <feDisplacementMap id="gdisp" in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G" result="disp"/>
+      <feColorMatrix in="disp" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="r"/>
+      <feOffset id="goffR" in="r" dx="0" dy="0" result="r2"/>
+      <feColorMatrix in="disp" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="g"/>
+      <feColorMatrix in="disp" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="b"/>
+      <feOffset id="goffB" in="b" dx="0" dy="0" result="b2"/>
+      <feBlend in="r2" in2="g" mode="screen" result="rg"/>
+      <feBlend in="rg" in2="b2" mode="screen"/>
+    </filter>
+    <pattern id="hatch" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="14" height="14" fill="rgba(143,179,255,0.10)"/>
+      <line x1="0" y1="0" x2="0" y2="14" stroke="rgba(143,179,255,0.55)" stroke-width="4"/>
+    </pattern>
+    <pattern id="hatchRed" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="14" height="14" fill="rgba(255,74,61,0.12)"/>
+      <line x1="0" y1="0" x2="0" y2="14" stroke="rgba(255,74,61,0.55)" stroke-width="4"/>
+    </pattern>
+  </defs>
+</svg>
+<script type="module" src="main.js"></script>
+</body>
+</html>

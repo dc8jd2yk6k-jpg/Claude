@@ -1,0 +1,17 @@
+{
+  "name": "anthropic-80b-paradox",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Motion-graphics explainer: The $80 Billion Paradox",
+  "type": "module",
+  "scripts": {
+    "render": "node render/render.mjs"
+  },
+  "dependencies": {
+    "@fontsource/instrument-serif": "^5.0.0",
+    "@fontsource/inter": "^5.0.0",
+    "@fontsource/jetbrains-mono": "^5.0.0",
+    "gsap": "^3.12.5",
+    "playwright": "^1.56.1"
+  }
+}
