@@ -14,7 +14,7 @@ export default function open(X) {
   const date = cput(A.cam, `<div class="mono dim" style="font-size:26px;letter-spacing:.32em">MAY 6, 2026 · SAN FRANCISCO</div>`, 960, 300);
   inA(date, S("o1") + 0.2, "wipe", { dur: 1.2 });
   cueSfx(S("o1") + 0.2, "whoosh_soft");
-  const who = cput(A.cam, `<div class="mono" style="font-size:18px;letter-spacing:.3em;color:var(--clay)">● LIVE — ANTHROPIC CEO DARIO AMODEI</div>`, 960, 350);
+  const who = cput(A.cam, `<div class="mono" style="font-size:18px;letter-spacing:.3em;color:var(--clay)">● ANTHROPIC CEO DARIO AMODEI · ON STAGE</div>`, 960, 350);
   inA(who, S("o1") + 1.2, "fade", { dur: 0.6 });
 
   // audio-reactive waveform drawn from the actual narration envelope
@@ -39,9 +39,9 @@ export default function open(X) {
 
   // the quote
   const q = cput(A.cam, `<div class="serif ital" style="width:1500px;text-align:center;font-size:76px;line-height:1.12">
-      <span class="q1">“We tried to plan very well for a world of </span><span class="q2 clay">10x</span><span class="q3"> growth per year.</span>
+      <span class="q1">“We tried to plan very well</span><br><span class="q1b">for a world of </span><span class="q2 clay">10x</span><span class="q3"> growth per year.</span>
     </div>`, 960, 470);
-  typeSeq([q.querySelector(".q1"), q.querySelector(".q2"), q.querySelector(".q3")], S("o2") + 0.05, at("o2", "and yet") - S("o2") - 0.35);
+  typeSeq([q.querySelector(".q1"), q.querySelector(".q1b"), q.querySelector(".q2"), q.querySelector(".q3")], S("o2") + 0.05, at("o2", "and yet") - S("o2") - 0.35);
   cueSfx(S("o2") + 0.05, "typing", 0.8);
 
   const q4 = cput(A.cam, `<div class="serif ital nowrap" style="font-size:96px"><span class="ay">And yet we saw </span><span class="big clay" style="display:inline-block;font-size:150px;font-style:normal;font-family:'Inter Display';font-weight:900;letter-spacing:-.04em">80x.”</span></div>`, 960, 700);

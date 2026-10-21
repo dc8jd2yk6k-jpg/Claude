@@ -28,10 +28,13 @@ python3 tools/mix.py
 echo "== 4. render frames"
 node render/render.mjs --out build/video.mp4 --workers "${WORKERS:-4}"
 
-echo "== 5. final encode + mux"
+echo "== 5. final encode + mux (two-pass, sized to stay under GitHub's 100 MB limit)"
 OUT=../dist/anthropic-80b-paradox.mp4
-ffmpeg -hide_banner -y -i build/video.mp4 -i build/master.wav -i ../dist/anthropic-80b-paradox.srt \
-  -map 0:v -map 1:a -map 2:s -c:v libx264 -preset slow -crf "${CRF:-21}" -tune film -pix_fmt yuv420p \
-  -x264-params "aq-mode=3" -c:a aac -b:a 192k -c:s mov_text -metadata:s:s:0 language=eng \
-  -metadata title="The \$80 Billion Paradox" -movflags +faststart -shortest "$OUT"
+VB="${VBITRATE:-1250k}"
+(cd build && ffmpeg -hide_banner -loglevel error -y -i video.mp4 -c:v libx264 -preset slow -b:v "$VB" -tune film \
+  -pix_fmt yuv420p -pass 1 -passlogfile x264pass -an -f null /dev/null)
+ffmpeg -hide_banner -loglevel error -y -i build/video.mp4 -i build/master.wav -i ../dist/anthropic-80b-paradox.srt \
+  -map 0:v -map 1:a -map 2:s -c:v libx264 -preset slow -b:v "$VB" -maxrate 4000k -bufsize 8000k -tune film \
+  -pix_fmt yuv420p -pass 2 -passlogfile build/x264pass -c:a aac -b:a 160k -ar 48000 \
+  -c:s mov_text -metadata:s:s:0 language=eng -metadata title="The \$80 Billion Paradox" -movflags +faststart -shortest "$OUT"
 ffprobe -v error -show_entries format=duration,size -of default=nw=1 "$OUT"
