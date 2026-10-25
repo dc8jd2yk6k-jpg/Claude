@@ -33,11 +33,15 @@ node render/render.mjs --out build/video.mp4 --workers "${WORKERS:-4}"
 node render/thumbnail.mjs ../dist/thumbnail.png
 
 echo "== 5. final encode + mux (two-pass, sized to stay under GitHub's 100 MB limit)"
+# AAC overshoots sharp transients by 2-4 dB; limit just those peaks so the
+# encoded file stays under -1 dBTP (integrated loudness moves < 0.5 LU)
+ffmpeg -hide_banner -loglevel error -y -i build/master.wav \
+  -af "lowpass=f=18000,alimiter=limit=0.56:attack=0.5:release=60:level=false:asc=1" -c:a pcm_s24le build/master_aac.wav
 OUT=../dist/anthropic-80b-paradox.mp4
 VB="${VBITRATE:-3000k}"
 (cd build && ffmpeg -hide_banner -loglevel error -y -i video.mp4 -c:v libx264 -preset slow -b:v "$VB" -tune animation \
   -pix_fmt yuv420p -pass 1 -passlogfile x264pass -an -f null /dev/null)
-ffmpeg -hide_banner -loglevel error -y -i build/video.mp4 -i build/master.wav -i ../dist/anthropic-80b-paradox.srt \
+ffmpeg -hide_banner -loglevel error -y -i build/video.mp4 -i build/master_aac.wav -i ../dist/anthropic-80b-paradox.srt \
   -map 0:v -map 1:a -map 2:s -c:v libx264 -preset slow -b:v "$VB" -maxrate 8000k -bufsize 12000k -tune animation \
   -pix_fmt yuv420p -pass 2 -passlogfile build/x264pass -c:a aac -b:a 192k -ar 48000 \
   -c:s mov_text -metadata:s:s:0 language=eng -metadata title="The \$80 Billion Paradox" -movflags +faststart "$OUT"
