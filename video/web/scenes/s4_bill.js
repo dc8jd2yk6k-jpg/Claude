@@ -1,257 +1,185 @@
-// Chapter 4 — Twist #2, "The Real Bill": compute spend, the $518B tower, the cash, the loop.
-import { twistCard } from "./s3_phantom.js";
+// Twist #2 (2:19–3:07): compute, the $518B tower, the cash next to it, the loop.
+import { statement, heroNumber, drift } from "./kit.js";
 
-export default function ch4(X) {
-  const { S, E, at, put, cput, inA, outA, to, set, setHTML, tl, scene, hit, glitch, flash, cueSfx, during, counter, source, chapterLabel, svgLayer, sv } = X;
-  const t0 = X.sec("ch4");
-  chapterLabel("04 — Twist #2: the real bill", t0, X.sec("ch5") - 0.3);
+export default function bill(X) {
+  const { S, E, at, atEnd, put, cput, inA, outA, to, set, setHTML, scene, hit, glitch, punch, cueSfx, counter, during, sv, svgLayer, source, chapterLabel } = X;
+  const t0 = X.sec("bill");
+  chapterLabel("04 · Twist #2: the real bill", t0, X.sec("verdict") - 0.3);
 
-  /* ---------- NOT SO FAST ---------- */
-  const NF = scene("bill-notsofast", t0 - 0.1, S("c4_1") - 0.1, { fin: 0, fout: 0.15, z: 3 });
-  const nf = cput(NF.cam, `<div class="disp black red nowrap" style="font-size:240px;letter-spacing:-.04em;text-shadow:0 0 70px rgba(255,74,61,.5)">NOT SO FAST.</div>`, 960, 540);
-  inA(nf, t0, "slam", { dur: 0.4 });
-  hit(t0 + 0.05, { amp: 26, peak: 0.45, color: "#ff4a3d" });
-  glitch(t0, 0.35, 1);
-  cueSfx(t0, "impact_big", 1.1);
-  twistCard(X, 2, "The Real Bill", S("c4_1") - 0.15, S("c4_2") - 0.1, "#ff6a3d");
+  /* ---- b1: not so fast ---- */
+  const NF = scene("bill-nsf", t0 - 0.05, S("b2") - 0.05, { fin: 0.05, fout: 0.15 });
+  drift(X, NF, 0.07);
+  const k = cput(NF.cam, `<div class="kicker" style="font-size:30px">PLOT TWIST #2</div>`, 960, 300);
+  inA(k, t0, "wipe", { dur: 0.35 });
+  const nsf = cput(NF.cam, `<div class="hero glow-red nowrap" style="font-size:250px">NOT SO FAST.</div>`, 960, 500);
+  inA(nsf, at("b1", "not so fast") - 0.05, "slam", { dur: 0.4 });
+  hit(at("b1", "not so fast") + 0.02, { amp: 18, peak: 0.3, color: "#ff4a3d" });
+  cueSfx(at("b1", "not so fast") - 0.05, "impact", 0.9, 2);
+  const real = cput(NF.cam, `<div class="serif ital nowrap" style="font-size:100px">a number that is <span class="glow-hot">very, very real</span></div>`, 960, 730);
+  inA(real, at("b1", "a number") - 0.1, "blur", { dur: 0.45 });
 
-  /* ---------- compute spend ---------- */
-  const CS = scene("bill-compute", S("c4_2") - 0.15, S("c4_3") - 0.1, { fin: 0.25, fout: 0.3 });
-  const ch = put(CS.cam, `<div style="position:absolute;left:200px;top:180px">
-      <div class="disp black" style="font-size:150px;line-height:1">Compute.</div>
-      <div class="mono dim" style="font-size:22px;letter-spacing:.25em;margin-top:16px">COMPUTING & INFRASTRUCTURE SPEND</div></div>`);
-  inA([...ch.children], CS.t0 + 0.05, "up", { dur: 0.7, stagger: 0.12 });
-  const KS = 52;
-  const cbars = [
-    { x: 1000, v: 2.3, lab: "H1 2025", val: "$2.3B", col: "#8e9aab", w: ["c4_2", "two point three"] },
-    { x: 1360, v: 9, lab: "H1 2026", val: "≈ $9B", col: "#ff6a3d", w: ["c4_2", "nearly nine"] },
-  ].map((b) => {
-    const bar = put(CS.cam, `<div style="position:absolute;left:${b.x}px;top:900px;width:220px;height:0;background:${b.col}"></div>`);
-    const lab = put(CS.cam, `<div class="mono dim" style="position:absolute;left:${b.x - 40}px;top:920px;width:300px;text-align:center;font-size:22px;letter-spacing:.2em">${b.lab}</div>`);
-    const val = put(CS.cam, `<div class="disp black" style="position:absolute;left:${b.x - 60}px;top:${900 - b.v * KS - 100}px;width:340px;text-align:center;font-size:76px">${b.val}</div>`);
-    const t = at(b.w[0], b.w[1]) - 0.1;
-    to(bar, t, { height: b.v * KS, top: 900 - b.v * KS, duration: 0.9, ease: "expo.out" });
-    inA([lab, val], t + 0.2, "up", { dur: 0.6 });
-    cueSfx(t, "stair");
-    return bar;
+  /* ---- b2: compute spend ---- */
+  const CS = scene("bill-compute", S("b2") - 0.05, S("b3") - 0.05, { fin: 0.1, fout: 0.15 });
+  drift(X, CS, 0.04);
+  const ch = put(CS.cam, `<div style="position:absolute;left:150px;top:200px"><div class="hero" style="font-size:180px">Compute.</div><div class="label" style="margin-top:14px">HALF-YEAR COMPUTE & INFRASTRUCTURE SPEND</div></div>`);
+  inA(ch, at("b2", "compute") - 0.1, "up", { dur: 0.45 });
+  const KS = 58;
+  [["H1 2025", 2.3, "$2.3B", "#9aa8bb", ["b2", "two point three"], 1060], ["H1 2026", 9, "≈ $9B", "#ff5a36", ["b2", "nearly nine"], 1420]].forEach(([lab, v, txt, col, w, x]) => {
+    const t = at(w[0], w[1]) - 0.1;
+    const bb = put(CS.cam, `<div style="position:absolute;left:${x}px;top:920px;width:260px;height:0;background:${col}"></div>`);
+    const l = put(CS.cam, `<div class="label" style="position:absolute;left:${x - 20}px;top:940px;width:300px;text-align:center;font-size:28px">${lab}</div>`);
+    const tv = put(CS.cam, `<div class="hero" style="position:absolute;left:${x - 70}px;top:${920 - v * KS - 120}px;width:400px;text-align:center;font-size:96px">${txt}</div>`);
+    to(bb, t, { height: v * KS, top: 920 - v * KS, duration: 0.7, ease: "expo.out" });
+    inA([l, tv], t + 0.15, "up", { dur: 0.4 });
   });
-  const x4 = cput(CS.cam, `<div class="stamp" style="font-size:54px;color:#ff6a3d;transform:rotate(-6deg)">≈4×</div>`, 1250, 330);
-  inA(x4, at("c4_2", "nearly nine") + 0.7, "slam", { dur: 0.4 });
-  cueSfx(at("c4_2", "nearly nine") + 0.7, "stamp");
-  source("REUTERS, FROM THE DRAFT S-1 (OCT 20, 2026)", CS.t0, CS.t1);
+  const x4 = cput(CS.cam, `<div class="stamp" style="font-size:64px;color:#ff5a36;transform:rotate(-6deg)">≈4×</div>`, 1310, 420);
+  inA(x4, at("b2", "nearly nine") + 0.6, "slam", { dur: 0.35 });
+  punch(at("b2", "nearly nine") + 0.6, 0.05);
+  source("Reuters — draft S-1, Oct 20 2026", CS.t0 + 0.3, CS.t1);
 
-  /* ---------- the tower of commitments ---------- */
-  const TW = scene("bill-tower", S("c4_3") - 0.15, S("c4_14") - 0.15, { fin: 0.3, fout: 0.4 });
+  /* ---- b3–b5: the tower of commitments ---- */
+  const TW = scene("bill-tower", S("b3") - 0.05, S("b8") - 0.05, { fin: 0.1, fout: 0.2 });
   const tsv = svgLayer(TW.cam);
-  const GX = 700, GY = 900, A = 190, D = 95, KH = 640 / 518;
+  const GX = 640, GY = 930, A = 210, D = 105, KH = 660 / 518;
   const iso = (g, z0, z1, cx, gy, cols, a = A, d = D) => {
     const by = gy - z0, ty = gy - z1;
     sv("polygon", { points: `${cx - a},${ty} ${cx},${ty + d} ${cx},${by + d} ${cx - a},${by}`, fill: cols[0] }, g);
     sv("polygon", { points: `${cx},${ty + d} ${cx + a},${ty} ${cx + a},${by} ${cx},${by + d}`, fill: cols[1] }, g);
     sv("polygon", { points: `${cx},${ty - d} ${cx + a},${ty} ${cx},${ty + d} ${cx - a},${ty}`, fill: cols[2] }, g);
   };
-  const begin = cput(TW.cam, `<div class="serif ital nowrap" style="font-size:96px">…and that’s just the beginning.</div>`, 1180, 300);
-  inA(begin, TW.t0 + 0.2, "blur", { dur: 0.7 });
-  outA(begin, at("c4_3", "five hundred") - 0.6, "fade", { dur: 0.4 });
-  // ghost outline of the reported total
-  const ghost = sv("g", { opacity: 0 }, tsv);
+  sv("polygon", { points: `${GX - A},${GY} ${GX},${GY + D} ${GX + A},${GY} ${GX},${GY - D}`, fill: "rgba(243,239,230,.06)", stroke: "rgba(243,239,230,.25)", "stroke-width": 2 }, tsv);
   const gtop = GY - 518 * KH;
-  sv("polyline", { points: `${GX - A},${GY} ${GX - A},${gtop} ${GX},${gtop - D} ${GX + A},${gtop} ${GX + A},${GY}`, fill: "none", stroke: "rgba(255,106,61,.6)", "stroke-width": 2.5, "stroke-dasharray": "10 10" }, ghost);
-  sv("polyline", { points: `${GX - A},${gtop} ${GX},${gtop + D} ${GX + A},${gtop}`, fill: "none", stroke: "rgba(255,106,61,.6)", "stroke-width": 2.5, "stroke-dasharray": "10 10" }, ghost);
-  sv("polygon", { points: `${GX - A},${GY} ${GX},${GY + D} ${GX + A},${GY} ${GX},${GY - D}`, fill: "rgba(243,239,230,.05)", stroke: "rgba(243,239,230,.2)", "stroke-width": 2 }, tsv);
-  const hdr = put(TW.cam, `<div style="position:absolute;left:1240px;top:100px">
-      <div class="mono dim" style="font-size:22px;letter-spacing:.25em">AI-INFRASTRUCTURE COMMITMENTS</div>
-      <div class="disp black num v" style="font-size:130px;line-height:1.05;color:#ff6a3d">≥ $518B</div>
-      <div class="mono dim" style="font-size:22px;letter-spacing:.2em">OVER ROUGHLY A DECADE</div></div>`);
-  const t518 = at("c4_3", "five hundred") - 0.2;
-  inA(hdr, t518, "up", { dur: 0.7 });
-  counter(hdr.querySelector(".v"), t518, 1.6, 0, 518, (v) => `≥ $${Math.round(v)}B`, "expo.out");
-  set(ghost, t518, { attr: { opacity: 1 } });
-  cueSfx(t518, "impact", 1);
+  const ghostT = sv("g", { opacity: 0 }, tsv);
+  sv("polyline", { points: `${GX - A},${GY} ${GX - A},${gtop} ${GX},${gtop - D} ${GX + A},${gtop} ${GX + A},${GY}`, fill: "none", stroke: "rgba(255,106,61,.7)", "stroke-width": 3, "stroke-dasharray": "12 10" }, ghostT);
+  const hdr = put(TW.cam, `<div style="position:absolute;left:1080px;top:150px">
+      <div class="label">AI-INFRASTRUCTURE COMMITMENTS</div>
+      <div class="hero num v glow-hot" style="font-size:190px">≥ $0B</div>
+      <div class="label">OVER ROUGHLY A DECADE</div></div>`);
+  const t518 = at("b3", "five hundred") - 0.15;
+  inA(hdr, TW.t0 + 0.1, "up", { dur: 0.45 });
+  counter(hdr.querySelector(".v"), t518, 1.2, 0, 518, (v) => `≥ $${Math.round(v)}B`, "expo.out");
+  set(ghostT, t518, { attr: { opacity: 1 } });
+  punch(t518 + 0.1, 0.05);
+  cueSfx(t518 - 0.05, "impact", 0.7, 2);
   const blocks = [
-    { n: "GOOGLE", v: 111.1, w: ["c4_4", "google"], c: ["#8a3b22", "#b5502f", "#e07a52"] },
-    { n: "AMAZON", v: 110, w: ["c4_5", "amazon"], c: ["#7a3420", "#a6492b", "#d36f49"] },
-    { n: "MICROSOFT", v: 31.4, w: ["c4_6", "microsoft"], c: ["#6b2e1d", "#954027", "#c46442"] },
-    { n: "NVIDIA GPUs VIA NEOCLOUDS", v: 86, w: ["c4_7", "nvidia"], c: ["#7f4a1c", "#ad6626", "#d9893f"] },
-    { n: "BROADCOM-LINKED LEASES", v: 161.2, w: ["c4_8", "broadcom"], c: ["#5e1f16", "#86301f", "#b44a32"] },
+    ["GOOGLE", 111.1, "google", ["#8a3b22", "#b5502f", "#ff8a5c"]],
+    ["AMAZON", 110, "amazon", ["#7a3420", "#a6492b", "#f07a52"]],
+    ["MICROSOFT", 31.4, "microsoft", ["#6b2e1d", "#954027", "#d96a46"]],
+    ["NVIDIA VIA NEOCLOUDS", 86, "nvidia", ["#7f4a1c", "#ad6626", "#f09a4a"]],
+    ["BROADCOM-LINKED LEASES", 161.2, "broadcom-linked", ["#5e1f16", "#86301f", "#c9553a"]],
   ];
   let z = 0;
   const labels = [];
-  blocks.forEach((b, i) => {
-    const z0 = z, z1 = z + b.v * KH;
+  blocks.forEach(([n, v, w, cols], i) => {
+    const z0 = z, z1 = z + v * KH;
     z = z1;
     const g = sv("g", {}, tsv);
-    iso(g, z0 + 2, z1, GX, GY, b.c);
-    const tz = at(b.w[0], b.w[1]) - 0.2;
-    gsap.set(g, { opacity: 0, y: -260 });
-    to(g, tz, { opacity: 1, y: 0, duration: 0.55, ease: "bounce.out" });
-    cueSfx(tz + 0.25, "block", 1);
-    shake(tz + 0.3, 6 + i * 2, 0.35);
-    // label with leader line
+    iso(g, z0 + 2, z1, GX, GY, cols);
+    const tz = at("b4", w) - 0.12;
+    gsap.set(g, { opacity: 0, y: -300 });
+    to(g, tz, { opacity: 1, y: 0, duration: 0.45, ease: "bounce.out" });
+    X.shake(tz + 0.25, 5 + i * 2, 0.3);
     const ym = GY - (z0 + z1) / 2 + D * 0.4;
-    const lx = GX + A + 40;
-    const ll = sv("line", { x1: GX + A - 10, x2: lx + 60, y1: ym, y2: ym, stroke: "rgba(243,239,230,.35)", "stroke-width": 1.5 }, tsv);
-    const lab = put(TW.cam, `<div class="nowrap" style="position:absolute;left:${lx + 76}px;top:${ym - 24}px;display:flex;align-items:baseline;gap:18px">
-        <div class="disp black" style="font-size:44px">$${b.v}B</div><div class="mono dim" style="font-size:19px;letter-spacing:.15em">${b.n}</div></div>`);
-    gsap.set(ll, { opacity: 0 });
-    to(ll, tz + 0.3, { opacity: 1, duration: 0.3 });
-    inA(lab, tz + 0.3, "left", { dur: 0.5 });
-    labels.push(lab, ll);
+    const lab = put(TW.cam, `<div class="nowrap" style="position:absolute;left:${GX + A + 50}px;top:${ym - 30}px;display:flex;align-items:baseline;gap:18px">
+        <div class="hero" style="font-size:56px">$${v}B</div><div class="label" style="font-size:24px;color:var(--ink)">${n}</div></div>`);
+    inA(lab, tz + 0.2, "left", { dur: 0.35 });
+    labels.push(lab);
   });
-  function shake(t, a, d) { X.shake(t, a, d); }
-  const sumNote = put(TW.cam, `<div class="mono dim2" style="position:absolute;left:1000px;top:955px;width:840px;font-size:15px;letter-spacing:.1em;line-height:1.5">COMPONENTS FROM REUTERS & OTHER REPORTS ON THE DRAFT S-1; MAY NOT SUM EXACTLY. OTHER REPORTS CITE $450B–$750B.</div>`);
-  inA(sumNote, at("c4_4", "google"), "fade");
-  // 80% non-cancellable overlay
   const lock = sv("g", { opacity: 0 }, tsv);
   const z80 = 518 * 0.8 * KH;
   sv("polygon", { points: `${GX - A},${GY - z80} ${GX},${GY - z80 + D} ${GX},${GY + D} ${GX - A},${GY}`, fill: "url(#hatchRed)" }, lock);
   sv("polygon", { points: `${GX},${GY - z80 + D} ${GX + A},${GY - z80} ${GX + A},${GY} ${GX},${GY + D}`, fill: "url(#hatchRed)" }, lock);
-  sv("line", { x1: GX - A - 8, x2: GX + A + 20, y1: GY - z80, y2: GY - z80, stroke: "#ff4a3d", "stroke-width": 3, "stroke-dasharray": "12 8" }, lock);
-  const t80 = at("c4_9", "eighty") - 0.2;
+  sv("line", { x1: GX - A - 10, x2: GX + A + 30, y1: GY - z80, y2: GY - z80, stroke: "#ff4a3d", "stroke-width": 4, "stroke-dasharray": "14 8" }, lock);
+  const t80 = at("b5", "eighty") - 0.15;
   set(lock, t80, { attr: { opacity: 1 } });
-  X.tl.fromTo(lock, { opacity: 0 }, { opacity: 1, duration: 0.5, immediateRender: false }, t80);
-  const l80 = put(TW.cam, `<div style="position:absolute;left:120px;top:${GY - z80 - 120}px;width:420px">
-      <div class="disp black red" style="font-size:96px;line-height:1">≈80%</div>
-      <div class="mono red" style="font-size:22px;letter-spacing:.18em;margin-top:6px">🔒 CAN’T BE CANCELLED</div></div>`);
-  inA(l80, t80, "right", { dur: 0.6 });
-  cueSfx(at("c4_9", "cancelled") - 0.1, "lock", 1);
-  // the cash cube
-  const tCash0 = S("c4_10") - 0.1;
-  to(TW.cam, tCash0, { x: -260, duration: 1.2, ease: "power3.inOut" });
-  labels.forEach((l) => to(l, tCash0, { opacity: 0, duration: 0.4 }));
-  to(hdr, tCash0, { opacity: 0.18, duration: 0.5 });
-  to(l80, tCash0, { opacity: 0, duration: 0.4 });
-  to(sumNote, tCash0, { opacity: 0, duration: 0.4 });
-  const CX = 1520, ca = 60, cd = 30;
+  const l80 = put(TW.cam, `<div style="position:absolute;left:90px;top:${GY - z80 - 160}px;width:360px"><div class="hero glow-red" style="font-size:120px">80%</div><div class="label" style="color:#ff4a3d;font-size:26px">🔒 CAN’T BE CANCELLED</div></div>`);
+  inA(l80, t80, "right", { dur: 0.4 });
+  cueSfx(at("b5", "cancelled") - 0.1, "lock", 1, 2);
+  // the cash cube, ~25x smaller
+  const tCash0 = S("b6") - 0.1;
+  to(TW.cam, tCash0, { x: -300, duration: 0.9, ease: "power3.inOut" });
+  to(labels, tCash0, { opacity: 0, duration: 0.3 });
+  to(hdr, tCash0, { opacity: 0, duration: 0.4 });
+  to(l80, tCash0, { opacity: 0, duration: 0.3 });
+  const CX = 1560, ca = 70, cd = 35;
   const cash = sv("g", { opacity: 0 }, tsv);
-  sv("polygon", { points: `${CX - ca},${GY} ${CX},${GY + cd} ${CX + ca},${GY} ${CX},${GY - cd}`, fill: "rgba(243,239,230,.05)", stroke: "rgba(243,239,230,.2)", "stroke-width": 2 }, tsv);
-  iso(cash, 0, 20.28 * KH, CX, GY, ["#1f8d6b", "#2bb98d", "#6fe8c4"], ca, cd);
-  const tCash = at("c4_11", "twenty point") - 0.1;
-  gsap.set(cash, { y: -200 });
+  sv("polygon", { points: `${CX - ca},${GY} ${CX},${GY + cd} ${CX + ca},${GY} ${CX},${GY - cd}`, fill: "rgba(243,239,230,.06)", stroke: "rgba(243,239,230,.25)", "stroke-width": 2 }, tsv);
+  iso(cash, 0, 20.28 * KH, CX, GY, ["#1f8d6b", "#2bb98d", "#7af0cd"], ca, cd);
+  const tCash = at("b6", "the cash") - 0.05;
+  gsap.set(cash, { y: -220 });
   to(cash, tCash, { opacity: 1, y: 0, duration: 0.4, ease: "bounce.out" });
-  cueSfx(tCash + 0.2, "block_small", 1);
-  const clab = put(TW.cam, `<div style="position:absolute;left:${CX - 200}px;top:${GY + 70}px;width:400px;text-align:center">
-      <div class="disp black teal" style="font-size:64px">$20.28B</div><div class="mono dim" style="font-size:18px;letter-spacing:.15em;margin-top:4px">CASH · DEC 31, 2025</div></div>`);
-  inA(clab, tCash + 0.2, "up", { dur: 0.5 });
-  const x25 = cput(TW.cam, `<div class="disp black nowrap" style="font-size:300px;line-height:1;color:#ff6a3d;text-shadow:0 0 90px rgba(255,106,61,.5)">≈25×</div>`, 1450, 500);
-  const t25 = at("c4_11", "twenty-five") - 0.15;
-  inA(x25, t25, "slam", { dur: 0.45 });
-  hit(t25 + 0.05, { amp: 22, peak: 0.35, color: "#ff6a3d" });
-  cueSfx(t25, "impact_big", 1.1);
-  const x25s = cput(TW.cam, `<div class="mono nowrap" style="font-size:26px;letter-spacing:.25em;color:var(--ink2)">THE BILL vs. THE CASH</div>`, 1450, 670);
-  inA(x25s, t25 + 0.4, "fade");
-  // raises
-  const tRz = at("c4_12", "thirty billion") - 0.2;
-  outA([x25, x25s], tRz - 0.6, "fade", { dur: 0.4 });
-  const rz = [[30, "+$30B · FEB", ["c4_12", "thirty billion"]], [65, "+$65B · MAY", ["c4_12", "sixty-five"]]];
+  const clab = put(TW.cam, `<div style="position:absolute;left:${CX - 560}px;top:${GY - 110}px;width:460px;text-align:right"><div class="hero glow-mint" style="font-size:76px">$20.28B</div><div class="label" style="font-size:22px">CASH · DEC 31 2025</div></div>`);
+  inA(clab, tCash + 0.2, "up", { dur: 0.4 });
+  const x25 = cput(TW.cam, `<div style="text-align:center"><div class="hero glow-hot nowrap" style="font-size:330px">≈25×</div><div class="label" style="color:var(--ink);font-size:30px">THE BILL vs THE CASH</div></div>`, 1480, 440);
+  const t25 = at("b6", "twenty-five") - 0.1;
+  inA(x25, t25, "slam", { dur: 0.4 });
+  hit(t25 + 0.05, { amp: 26, peak: 0.4, color: "#ff5a36" });
+  cueSfx(t25 - 0.04, "impact_big", 1, 3);
+  // b7: the 2026 raises still don't close the gap
+  const tRz = S("b7") + 0.4;
+  to(x25, tRz, { opacity: 0, scale: 0.8, duration: 0.4 });
   let zc = 20.28 * KH;
-  rz.forEach(([v, lab, w], i) => {
+  [[30, "+$30B · FEB", "ninety-five"], [65, "+$65B · MAY", "ninety-five"]].forEach(([v, lab, w], i) => {
     const g = sv("g", { opacity: 0 }, tsv);
-    iso(g, zc + 2, zc + v * KH, CX, GY, ["#4b5260", "#6c7586", "#a6afbf"], ca, cd);
+    iso(g, zc + 2, zc + v * KH, CX, GY, ["#4b5260", "#6c7586", "#b6bfcf"], ca, cd);
     const yl = GY - zc - (v * KH) / 2;
     zc += v * KH;
-    const t = at(w[0], w[1]) - 0.15;
+    const t = at("b7", w) + i * 0.45 - 0.1;
     gsap.set(g, { y: -220 });
-    to(g, t, { opacity: 1, y: 0, duration: 0.45, ease: "bounce.out" });
-    cueSfx(t + 0.2, "block_small", 0.9);
-    const l = put(TW.cam, `<div class="mono nowrap" style="position:absolute;left:${CX + ca + 24}px;top:${yl - 14}px;font-size:22px;letter-spacing:.12em;color:var(--steel)">${lab}</div>`);
-    inA(l, t + 0.2, "left", { dur: 0.4 });
+    to(g, t, { opacity: 1, y: 0, duration: 0.4, ease: "bounce.out" });
+    const l = put(TW.cam, `<div class="label nowrap" style="position:absolute;left:${CX + ca + 24}px;top:${yl - 16}px;font-size:26px;color:var(--steel)">${lab}</div>`);
+    inA(l, t + 0.2, "left", { dur: 0.35 });
   });
-  const rzNote = put(TW.cam, `<div class="mono dim2" style="position:absolute;left:${CX - 300}px;top:${GY + 170}px;width:640px;text-align:center;font-size:15px;letter-spacing:.1em">ANNOUNCED 2026 FUNDING ROUNDS — NOT A CASH BALANCE</div>`);
-  inA(rzNote, tRz, "fade");
-  const frac = cput(TW.cam, `<div class="serif ital nowrap" style="font-size:100px">still a fraction of the bill.</div>`, 1290, 560);
-  inA(frac, S("c4_13") - 0.1, "blur", { dur: 0.7 });
-  to(TW.cam, S("c4_12"), { scale: 1.04, duration: S("c4_14") - S("c4_12"), ease: "none" });
-  source("REUTERS (OCT 2026); FORTUNE (CASH, SEP 2026); AXIOS / ORRICK (2026 ROUNDS)", TW.t0, TW.t1);
+  const frac = cput(TW.cam, `<div style="text-align:center"><div class="label" style="font-size:24px">ANNOUNCED 2026 ROUNDS — NOT A CASH BALANCE</div><div class="hero nowrap" style="font-size:110px;margin-top:10px">Still a fraction.</div></div>`, 1380, 360);
+  inA(frac, at("b7", "still") - 0.1, "blur", { dur: 0.45 });
+  punch(at("b7", "fraction"), 0.05);
+  source("Reuters (Oct 2026); other reports cite $450B–$750B · cash: Fortune · rounds: Axios, Orrick", TW.t0 + 0.4, TW.t1);
 
-  /* ---------- the money loop ---------- */
-  const LP = scene("bill-loop", S("c4_14") - 0.15, S("c4_17") - 0.15, { fin: 0.3, fout: 0.35 });
+  /* ---- b8: landlords, investors, rivals ---- */
+  const LP = scene("bill-loop", S("b8") - 0.05, S("b9") - 0.05, { fin: 0.1, fout: 0.15 });
+  drift(X, LP, 0.05);
+  const NA = { x: 520, y: 560 }, NB = { x: 1400, y: 560 };
+  const nodeA = cput(LP.cam, `<div style="width:400px;height:400px;border-radius:200px;border:4px solid #9aa8bb;background:#11141a;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+      <div class="hero" style="font-size:56px">AMAZON<br>GOOGLE<br>MICROSOFT</div></div>`, NA.x, NA.y);
+  const nodeB = cput(LP.cam, `<div style="width:400px;height:400px;border-radius:200px;border:4px solid #ff5a36;background:#1c100c;display:flex;align-items:center;justify-content:center"><div class="hero" style="font-size:60px">ANTHROPIC</div></div>`, NB.x, NB.y);
+  inA([nodeA, nodeB], LP.t0, "pop", { dur: 0.45, stagger: 0.12 });
+  [["LANDLORDS", "#ffc857", "landlords", 300], ["INVESTORS", "#3de0b0", "investors", 640], ["RIVALS?", "#ff4a3d", "rivals", 960]].forEach(([r, c, w, x]) => {
+    const e = cput(LP.cam, `<div class="pill" style="font-size:34px;background:${c};color:#07070a">${r}</div>`, x, 930);
+    inA(e, at("b8", w) - 0.1, "pop", { dur: 0.4 });
+  });
   const lsv = svgLayer(LP.cam);
-  const NA = { x: 500, y: 540 }, NB = { x: 1420, y: 540 };
-  const nodeA = cput(LP.cam, `<div style="width:360px;height:360px;border-radius:180px;border:3px solid #8e9aab;background:#121418;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
-      <div class="mono" style="font-size:26px;letter-spacing:.15em">AMAZON<br>GOOGLE</div>
-      <div class="mono dim tag" style="font-size:17px;letter-spacing:.15em;margin-top:14px">INVESTORS · LANDLORDS</div></div>`, NA.x, NA.y);
-  const nodeB = cput(LP.cam, `<div style="width:360px;height:360px;border-radius:180px;border:3px solid #d97757;background:#1b120e;display:flex;flex-direction:column;align-items:center;justify-content:center">
-      <div class="mono" style="font-size:28px;letter-spacing:.15em">ANTHROPIC</div></div>`, NB.x, NB.y);
-  inA(nodeA, LP.t0 + 0.1, "pop", { dur: 0.6 });
-  inA(nodeB, LP.t0 + 0.3, "pop", { dur: 0.6 });
-  const both = cput(LP.cam, `<div class="serif ital nowrap" style="font-size:76px">both sides of the table</div>`, 960, 150);
-  inA(both, at("c4_14", "both sides") - 0.2, "blur", { dur: 0.7 });
-  outA(both, S("c4_15") - 0.1, "fade", { dur: 0.3 });
-  const topArc = sv("path", { d: `M ${NA.x + 120} ${NA.y - 140} C 800 220, 1120 220, ${NB.x - 120} ${NB.y - 140}`, fill: "none", stroke: "#35d6a6", "stroke-width": 4, pathLength: 1 }, lsv);
-  const botArc = sv("path", { d: `M ${NB.x - 120} ${NB.y + 140} C 1120 860, 800 860, ${NA.x + 120} ${NA.y + 140}`, fill: "none", stroke: "#ff6a3d", "stroke-width": 4, pathLength: 1 }, lsv);
-  const steps = [
-    ["c4_15", "invest", topArc, `<div class="mono teal" style="font-size:24px;letter-spacing:.18em">① INVEST $ →</div>`, 960, 230],
-    ["c4_15", "pays them", botArc, `<div class="mono" style="font-size:24px;letter-spacing:.18em;color:#ff6a3d">← ② PAY FOR CLOUD</div>`, 960, 850],
-  ];
-  steps.forEach(([id, w, path, html, x, y]) => {
-    const t = at(id, w) - 0.2;
-    X.draw(path, t, 0.9);
-    const l = cput(LP.cam, html, x, y);
-    inA(l, t + 0.3, "fade");
-    cueSfx(t, "whoosh_soft");
-  });
-  const b3 = cput(LP.cam, `<div class="mono teal nowrap" style="padding:12px 20px;border:2px solid #35d6a6;background:#0b0a09;font-size:22px;letter-spacing:.15em">③ STAKES RISE ↑</div>`, NA.x, NA.y + 230);
-  const b4 = cput(LP.cam, `<div class="mono red nowrap" style="padding:12px 20px;border:2px solid #ff4a3d;background:#0b0a09;font-size:22px;letter-spacing:.15em">④ BOOKS A LOSS ↓</div>`, NB.x, NB.y + 230);
-  inA(b3, at("c4_15", "their stakes") - 0.15, "pop", { dur: 0.5 });
-  inA(b4, at("c4_15", "books a loss") - 0.15, "pop", { dur: 0.5 });
-  cueSfx(at("c4_15", "their stakes") - 0.15, "pop");
-  cueSfx(at("c4_15", "books a loss") - 0.15, "pop");
-  // particles around the loop
-  const lc = put(LP.cam, `<canvas width="1920" height="1080" style="position:absolute;left:0;top:0"></canvas>`);
-  const lx = lc.getContext("2d");
-  const bez = (p0, p1, p2, p3, u) => {
-    const v = 1 - u;
-    return v * v * v * p0 + 3 * v * v * u * p1 + 3 * v * u * u * p2 + u * u * u * p3;
-  };
-  const tTop = at("c4_15", "invest"), tBot = at("c4_15", "pays them");
-  during(LP.t0, LP.t1, (t) => {
-    lx.clearRect(0, 0, 1920, 1080);
-    for (let i = 0; i < 24; i++) {
-      const u = ((i / 24) + t * 0.18) % 1;
-      if (t > tTop + 0.8) {
-        lx.fillStyle = "rgba(53,214,166,.9)";
-        lx.fillRect(bez(NA.x + 120, 800, 1120, NB.x - 120, u) - 4, bez(NA.y - 140, 220, 220, NB.y - 140, u) - 4, 8, 8);
-      }
-      if (t > tBot + 0.8) {
-        lx.fillStyle = "rgba(255,106,61,.9)";
-        lx.fillRect(bez(NB.x - 120, 1120, 800, NA.x + 120, u) - 4, bez(NB.y + 140, 860, 860, NA.y + 140, u) - 4, 8, 8);
-      }
-    }
-  });
-  // rivals
-  const tR = at("c4_16", "competitor") - 0.3;
-  const tag = nodeA.querySelector(".tag");
-  setHTML(tag, tR, "INVESTORS · LANDLORDS · <span class='red'>RIVALS</span>");
-  to(nodeA, tR, { borderColor: "#ff4a3d", duration: 0.4 });
-  const warn = cput(LP.cam, `<div class="card nowrap" style="position:absolute;padding:22px 34px;border-color:rgba(255,74,61,.5)">
-      <div class="mono red" style="font-size:22px;letter-spacing:.15em">⚠ FROM THE FILING’S RISK FACTORS</div>
-      <div class="serif ital" style="font-size:56px;margin-top:8px">Cloud partners increasingly see Anthropic as a competitor.</div></div>`, 960, 540);
-  inA(warn, at("c4_16", "warns") - 0.1, "up", { dur: 0.6 });
-  cueSfx(at("c4_16", "warns") - 0.1, "alert", 1);
-  const para = put(LP.cam, `<div class="mono dim2" style="position:absolute;left:560px;top:650px;width:800px;text-align:center;font-size:14px;letter-spacing:.1em">AS DESCRIBED IN PRESS REPORTS OF THE DRAFT S-1</div>`);
-  inA(para, at("c4_16", "warns") + 0.3, "fade");
-  source("REUTERS / FOURWEEKMBA, ON THE DRAFT S-1 RISK FACTORS", LP.t0, LP.t1);
+  const arc1 = sv("path", { d: `M ${NA.x + 140} ${NA.y - 150} C 820 260, 1100 260, ${NB.x - 140} ${NB.y - 150}`, fill: "none", stroke: "#3de0b0", "stroke-width": 6, pathLength: 1 }, lsv);
+  const arc2 = sv("path", { d: `M ${NB.x - 140} ${NB.y + 150} C 1100 860, 820 860, ${NA.x + 140} ${NA.y + 150}`, fill: "none", stroke: "#ffc857", "stroke-width": 6, pathLength: 1 }, lsv);
+  X.draw(arc2, at("b8", "landlords") - 0.1, 0.6);
+  X.draw(arc1, at("b8", "investors") - 0.1, 0.6);
+  const w1 = cput(LP.cam, `<div class="label" style="color:#3de0b0;font-size:26px">INVEST $ →</div>`, 960, 300);
+  const w2 = cput(LP.cam, `<div class="label" style="color:#ffc857;font-size:26px">← PAYS FOR COMPUTE</div>`, 960, 830);
+  inA(w2, at("b8", "landlords"), "fade");
+  inA(w1, at("b8", "investors"), "fade");
+  to(nodeA, at("b8", "rivals") - 0.1, { borderColor: "#ff4a3d", duration: 0.3 });
+  glitch(at("b8", "rivals") - 0.05, 0.25, 0.6);
+  punch(at("b8", "rivals"), 0.05);
+  source("Reuters / FourWeekMBA on the draft S-1 risk factors", LP.t0 + 0.3, LP.t1);
 
-  /* ---------- two customers ---------- */
-  const TC = scene("bill-customers", S("c4_17") - 0.15, X.sec("ch5") - 0.1, { fin: 0.3, fout: 0.3 });
+  /* ---- b9: two customers ---- */
+  const TC = scene("bill-cust", S("b9") - 0.05, X.sec("verdict") - 0.05, { fin: 0.1, fout: 0.15 });
+  drift(X, TC, 0.05);
   const csv = svgLayer(TC.cam);
-  const PX = 640, PY = 540, PR = 250;
-  sv("circle", { cx: PX, cy: PY, r: PR, fill: "none", stroke: "rgba(243,239,230,.12)", "stroke-width": 110 }, csv);
-  const w20 = sv("circle", { cx: PX, cy: PY, r: PR, fill: "none", stroke: "#ff6a3d", "stroke-width": 110, pathLength: 100, "stroke-dasharray": "0 100", transform: `rotate(-90 ${PX} ${PY})` }, csv);
-  const w25 = sv("circle", { cx: PX, cy: PY, r: PR, fill: "none", stroke: "url(#hatchRed)", "stroke-width": 110, pathLength: 100, "stroke-dasharray": "0 100", "stroke-dashoffset": -20, transform: `rotate(-90 ${PX} ${PY})` }, csv);
+  const PX = 620, PY = 560, PR = 270;
+  sv("circle", { cx: PX, cy: PY, r: PR, fill: "none", stroke: "rgba(243,239,230,.12)", "stroke-width": 120 }, csv);
+  const w20 = sv("circle", { cx: PX, cy: PY, r: PR, fill: "none", stroke: "#ff5a36", "stroke-width": 120, pathLength: 100, "stroke-dasharray": "0 100", transform: `rotate(-90 ${PX} ${PY})` }, csv);
+  const w25 = sv("circle", { cx: PX, cy: PY, r: PR, fill: "none", stroke: "url(#hatchRed)", "stroke-width": 120, pathLength: 100, "stroke-dasharray": "0 100", "stroke-dashoffset": -20, transform: `rotate(-90 ${PX} ${PY})` }, csv);
   const cs = { a: 0, b: 0 };
-  to(cs, at("c4_17", "fifth") - 0.2, { a: 20, duration: 0.8, ease: "expo.out" });
-  to(cs, at("c4_17", "quarter") - 0.2, { b: 5, duration: 0.6, ease: "expo.out" });
+  to(cs, at("b9", "fifth") - 0.15, { a: 20, duration: 0.6, ease: "expo.out" });
+  to(cs, at("b9", "quarter") - 0.15, { b: 5, duration: 0.5, ease: "expo.out" });
   during(TC.t0, TC.t1, () => {
     w20.setAttribute("stroke-dasharray", `${cs.a} ${100 - cs.a}`);
     w25.setAttribute("stroke-dasharray", `${cs.b} ${100 - cs.b}`);
   });
-  const ct = put(TC.cam, `<div style="position:absolute;left:1060px;top:360px;width:760px">
-      <div class="disp black" style="font-size:150px;line-height:1;color:#ff6a3d">2</div>
-      <div class="mono" style="font-size:30px;letter-spacing:.2em;margin-top:10px">CUSTOMERS</div>
-      <div class="serif ital dim" style="font-size:64px;margin-top:20px">≈ 20–25% of revenue</div></div>`);
-  inA([...ct.children], TC.t0 + 0.3, "up", { dur: 0.6, stagger: 0.12 });
-  cueSfx(at("c4_17", "fifth") - 0.2, "tick");
-  source("REUTERS; INC. — REPORTS DIFFER ON THE EXACT SHARE", TC.t0, TC.t1);
+  const ct = put(TC.cam, `<div style="position:absolute;left:1060px;top:330px">
+      <div class="hero glow-hot" style="font-size:260px;line-height:.9">2</div>
+      <div class="label" style="font-size:40px;color:var(--ink)">CUSTOMERS</div>
+      <div class="serif ital" style="font-size:80px;margin-top:20px;color:var(--ink2)">≈ 20–25% of revenue</div></div>`);
+  inA([...ct.children], TC.t0 + 0.2, "up", { dur: 0.4, stagger: 0.1 });
+  source("Reuters; Inc. — reports differ on the exact share", TC.t0 + 0.3, TC.t1);
 }

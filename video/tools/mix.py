@@ -1,5 +1,6 @@
-"""Final mix: VO cleanup, music ducked under the narration, SFX, two-pass
-loudness normalisation to -14 LUFS / -1.5 dBTP (streaming targets)."""
+"""Final mix: VO chain, music ducked under narration at the *phrase* level
+(gaps shorter than 1.6 s are bridged, so the bed rides smoothly instead of
+pumping between sentences), budgeted SFX, two-pass loudnorm to -14 LUFS."""
 import json
 import re
 import subprocess
@@ -8,13 +9,13 @@ from pathlib import Path
 
 import numpy as np
 import soundfile as sf
-from scipy.ndimage import maximum_filter1d, uniform_filter1d
 
 sys.path.insert(0, str(Path(__file__).parent))
 from dsp import SR, reverb  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 BUILD = ROOT / "build"
+DUCK_DB, BRIDGE, ATTACK, RELEASE = -6.0, 1.6, 0.15, 0.9
 
 
 def ff(*args):
@@ -25,44 +26,60 @@ def rms_db(x):
     return 20 * np.log10(np.sqrt(np.mean(x ** 2)) + 1e-12)
 
 
+def duck_curve():
+    """Per-sample music gain (linear) from the narration line spans in the timeline."""
+    tl = json.loads((BUILD / "timeline.json").read_text())
+    n = int(tl["duration"] * SR)
+    spans = sorted((l["start"], l["end"]) for l in tl["lines"].values())
+    merged = []
+    for a, b in spans:
+        if merged and a - merged[-1][1] < BRIDGE:
+            merged[-1][1] = max(merged[-1][1], b)
+        else:
+            merged.append([a, b])
+    target = np.zeros(n, np.float32)
+    for a, b in merged:
+        target[int(a * SR):int(b * SR)] = 1.0
+    # asymmetric one-pole smoothing: quick-ish attack, slow release
+    out = np.empty_like(target)
+    ka, kr = 1 - np.exp(-1 / (ATTACK * SR)), 1 - np.exp(-1 / (RELEASE * SR))
+    # lead the attack slightly so the duck is in place when the voice starts
+    lead = int(ATTACK * SR)
+    target = np.concatenate([target[lead:], np.zeros(lead, np.float32)])
+    v = 0.0
+    for i in range(n):  # simple loop, ~10M samples: fast enough with numpy scalars
+        t = target[i]
+        v += (ka if t > v else kr) * (t - v)
+        out[i] = v
+    return (10 ** (DUCK_DB * out / 20)).astype(np.float32)
+
+
 def main():
     tl = json.loads((BUILD / "timeline.json").read_text())
     n = int(tl["duration"] * SR)
 
-    # 1) voice: high-pass, gentle compression, presence, de-mud
     ff("-i", str(BUILD / "vo_track.wav"), "-af",
-       "highpass=f=75,lowpass=f=15500,equalizer=f=220:t=q:w=1.2:g=-2,equalizer=f=3200:t=q:w=1.4:g=2.5,"
-       "acompressor=threshold=-22dB:ratio=3:attack=4:release=140:makeup=2dB",
+       "highpass=f=80,lowpass=f=15500,equalizer=f=230:t=q:w=1.2:g=-2.5,equalizer=f=3400:t=q:w=1.3:g=3,"
+       "acompressor=threshold=-24dB:ratio=4:attack=3:release=120:makeup=3dB,asoftclip=type=tanh:threshold=0.95",
        "-ar", str(SR), "-ac", "1", "-c:a", "pcm_f32le", str(BUILD / "vo_proc.wav"))
     vo, _ = sf.read(BUILD / "vo_proc.wav", dtype="float32")
     vo = np.pad(vo, (0, max(0, n - len(vo))))[:n]
-    active = np.abs(vo) > 1e-3
-    vo *= 10 ** ((-19.0 - rms_db(vo[active])) / 20)       # speech-active RMS -> -19 dBFS
-    vo_st = np.stack([vo, vo], 1)
-    vo_st = reverb(vo_st, wet=0.07, rt60=0.9, pre=0.01, bright=6000)[:n]
+    vo *= 10 ** ((-18.5 - rms_db(vo[np.abs(vo) > 1e-3])) / 20)
+    vo_st = reverb(np.stack([vo, vo], 1), wet=0.06, rt60=0.8, pre=0.01, bright=6000)[:n]
 
-    # 2) music, ducked by the narration envelope
     mu, _ = sf.read(BUILD / "music.wav", dtype="float32", always_2d=True)
     mu = np.pad(mu, ((0, max(0, n - len(mu))), (0, 0)))[:n]
-    mu *= 10 ** ((-22.5 - rms_db(mu)) / 20)
-    env = np.abs(vo)
-    env = maximum_filter1d(env, size=int(0.30 * SR))         # hold through short gaps
-    env = uniform_filter1d(env, size=int(0.12 * SR))          # smooth attack / release
-    speak = np.clip(env / 0.03, 0, 1)
-    duck_db = -8.5 * speak
-    mu *= (10 ** (duck_db / 20))[:, None]
+    mu *= 10 ** ((-23.0 - rms_db(mu)) / 20)
+    mu *= duck_curve()[:, None]
 
-    # 3) sound design
     fx, _ = sf.read(BUILD / "sfx_track.wav", dtype="float32", always_2d=True)
     fx = np.pad(fx, ((0, max(0, n - len(fx))), (0, 0)))[:n]
-    fx *= 0.55 / (np.max(np.abs(fx)) + 1e-9)
-    fx *= (10 ** ((-2.5 * speak) / 20))[:, None]              # tuck small effects slightly under speech
+    fx *= 0.5 / (np.max(np.abs(fx)) + 1e-9)
 
     mix = vo_st + mu + fx
     mix /= max(1.0, np.max(np.abs(mix)) / 0.95)
     sf.write(BUILD / "premaster.wav", mix, SR, subtype="FLOAT")
 
-    # 4) two-pass loudnorm
     target = "I=-14:TP=-1.5:LRA=11"
     p = subprocess.run(["ffmpeg", "-hide_banner", "-i", str(BUILD / "premaster.wav"), "-af",
                         f"loudnorm={target}:print_format=json", "-f", "null", "-"], capture_output=True, text=True)

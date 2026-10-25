@@ -39,31 +39,36 @@ export function voEnv(t) {
   return acc / wsum;
 }
 
-function charWeight(s, i) {
-  const c = s[i];
-  if (c === "." && s[i + 1] === "." ) return 3;
-  if (c === "." || c === "?" || c === "!") return 9;
-  if (c === "," || c === ":" || c === ";") return 5;
-  return 1;
-}
-/** Estimated time at which `word` is spoken inside line `id`. */
-export function at(id, word, nth = 0) {
+const norm = (w) => w.toLowerCase().replace(/[^a-z0-9'-]/g, "");
+function findWords(id, phrase, nth) {
   const l = line(id);
-  const s = l.say.toLowerCase();
-  let i = -1, from = 0;
-  for (let k = 0; k <= nth; k++) {
-    i = s.indexOf(word.toLowerCase(), from);
-    if (i < 0) throw new Error(`"${word}" not in ${id}: ${l.say}`);
-    from = i + 1;
+  const q = phrase.split(/\s+/).map(norm).filter(Boolean);
+  const ws = l.words || [];
+  let seen = 0;
+  for (let i = 0; i + q.length <= ws.length; i++) {
+    let ok = true;
+    for (let k = 0; k < q.length; k++) {
+      const w = norm(ws[i + k][0]);
+      if (!(w === q[k] || w.startsWith(q[k]))) { ok = false; break; }
+    }
+    if (ok) {
+      if (seen === nth) return ws.slice(i, i + q.length);
+      seen++;
+    }
   }
-  let before = 0, total = 0;
-  for (let k = 0; k < s.length; k++) {
-    const w = charWeight(s, k);
-    total += w;
-    if (k < i) before += w;
-  }
-  return l.start + 0.04 + (l.dur - 0.12) * (before / total);
+  throw new Error(`"${phrase}" not in ${id}: ${l.say}`);
 }
+/** Time at which `phrase` starts being spoken in line `id` (word timestamps from the TTS). */
+export function at(id, phrase, nth = 0) {
+  return findWords(id, phrase, nth)[0][1];
+}
+/** Time at which `phrase` finishes being spoken in line `id`. */
+export function atEnd(id, phrase, nth = 0) {
+  const w = findWords(id, phrase, nth);
+  return w[w.length - 1][2];
+}
+/** Word timestamps [[word, start, end], ...] of a line. */
+export const wordsOf = (id) => line(id).words;
 
 /* ---------------------------------------------------------------- dom ---- */
 export function h(html) {
@@ -261,15 +266,19 @@ export const smooth = (a, b, x) => { const k = clamp((x - a) / (b - a)); return 
 /* ------------------------------------------------------- global effects ---- */
 const shakes = [], glitches = [], flashes = [];
 export const shake = (t, amp = 16, dur = 0.55) => shakes.push({ t, amp, dur });
-export const glitch = (t, dur = 0.35, amp = 1) => { glitches.push({ t, dur, amp }); sfx.push({ t: +t.toFixed(3), type: "glitch_short", gain: amp }); };
+export const glitch = (t, dur = 0.35, amp = 1) => glitches.push({ t, dur, amp });
 export const flash = (t, color = "#ffffff", peak = 0.7, dur = 0.45) => flashes.push({ t, color, peak, dur });
 export function hit(t, { color = "#ffffff", amp = 14, peak = 0.35 } = {}) {
   shake(t, amp, 0.5);
   flash(t, color, peak, 0.4);
 }
 const sfx = [];
-/** Record a sound-design cue for the audio pipeline. */
-export const cueSfx = (t, type, gain = 1) => sfx.push({ t: +t.toFixed(3), type, gain });
+/** Record a sound-design cue for the audio pipeline. Priority decides which cue
+ *  survives when sfx.py thins out cues that land too close together. */
+export const cueSfx = (t, type, gain = 1, prio = 1) => sfx.push({ t: +t.toFixed(3), type, gain, prio });
+const punches = [];
+/** A quick camera zoom-punch (pattern interrupt), seek-safe. */
+export const punch = (t, amt = 0.06, dur = 0.45) => punches.push({ t, amt, dur });
 
 export function letterbox(t0, t1, size = 120) {
   const bars = document.querySelectorAll(".lb");
@@ -279,13 +288,13 @@ export function letterbox(t0, t1, size = 120) {
 
 /* themes per section: [leak color A, leak color B, grid tint] */
 const THEMES = {
-  open: ["#d97757", "#3a2a22", "#f3efe6"],
-  ch1: ["#d97757", "#ebc36b", "#f3efe6"],
-  ch2: ["#ff4a3d", "#5a1410", "#ffd9d4"],
-  ch3: ["#8fb3ff", "#2b3a66", "#dfe8ff"],
-  ch4: ["#ff6a3d", "#661d10", "#ffe2d6"],
-  ch5: ["#ebc36b", "#3b3424", "#f6efd9"],
-  outro: ["#d97757", "#2f2620", "#f3efe6"],
+  hook: ["#ff4a3d", "#ff8a3d", "#f3efe6"],
+  strength: ["#ff8a3d", "#ffc857", "#f3efe6"],
+  leak: ["#ff4a3d", "#ff4a3d", "#ffd9d4"],
+  phantom: ["#6f9bff", "#a07bff", "#dfe8ff"],
+  bill: ["#ff6a3d", "#ff3d5a", "#ffe2d6"],
+  verdict: ["#ffc857", "#3de0b0", "#f6efd9"],
+  end: ["#ff8a3d", "#6f9bff", "#f3efe6"],
 };
 function hexRgb(h) {
   const n = parseInt(h.slice(1), 16);
@@ -326,34 +335,33 @@ function drawGlobals(t) {
   const frame = Math.round(t * fps);
   const [ca, cb, grid] = themeAt(t);
 
-  // background: deep gradient + drifting dot field
+  // background: clean near-black with a soft colored floor glow and a faint grid
   const bg = document.getElementById("bg").getContext("2d");
-  bg.fillStyle = "#0b0a09";
+  bg.fillStyle = "#07070a";
   bg.fillRect(0, 0, W, H);
-  const gr = bg.createRadialGradient(W * 0.5, H * 1.1, 50, W * 0.5, H * 0.9, 1100);
-  gr.addColorStop(0, `rgba(${cb[0]},${cb[1]},${cb[2]},0.35)`);
+  const gr = bg.createRadialGradient(W * 0.5, H * 1.25, 80, W * 0.5, H * 1.0, 1250);
+  gr.addColorStop(0, `rgba(${cb[0]},${cb[1]},${cb[2]},0.20)`);
   gr.addColorStop(1, "rgba(0,0,0,0)");
   bg.fillStyle = gr;
   bg.fillRect(0, 0, W, H);
-  const sp = 64, oy = (t * 7) % sp, ox = (t * 3) % sp;
+  const sp = 80, oy = (t * 9) % sp, ox = (t * 4) % sp;
   for (let y = -sp; y < H + sp; y += sp) {
     for (let x = -sp; x < W + sp; x += sp) {
       const px = x + ox, py = y + oy;
-      const a = 0.05 + 0.06 * (0.5 + 0.5 * Math.sin(px * 0.004 + py * 0.003 + t * 0.6));
+      const a = 0.035 + 0.045 * (0.5 + 0.5 * Math.sin(px * 0.004 + py * 0.003 + t * 0.8));
       bg.fillStyle = `rgba(${grid[0]},${grid[1]},${grid[2]},${a.toFixed(3)})`;
       bg.fillRect(px - 1, py - 1, 2, 2);
     }
   }
 
-  // light leaks
+  // colored glows (replaces the old brown light leaks)
   const lk = document.getElementById("leak").getContext("2d");
   lk.clearRect(0, 0, W, H);
   const lg = leakGain(t);
   if (lg > 0.001) {
     const blobs = [
-      [0.15 + 0.1 * Math.sin(t * 0.13), 0.2 + 0.1 * Math.cos(t * 0.11), 900, ca, 0.16],
-      [0.85 + 0.08 * Math.cos(t * 0.09), 0.85 + 0.08 * Math.sin(t * 0.12), 1000, cb, 0.16],
-      [0.6 + 0.2 * Math.sin(t * 0.05 + 2), 0.1, 700, ca, 0.07],
+      [0.12 + 0.08 * Math.sin(t * 0.21), 0.15 + 0.08 * Math.cos(t * 0.17), 820, ca, 0.10],
+      [0.88 + 0.06 * Math.cos(t * 0.15), 0.9 + 0.05 * Math.sin(t * 0.19), 900, cb, 0.09],
     ];
     for (const [bx, by, rad, c, a] of blobs) {
       const g = lk.createRadialGradient(bx * W, by * H, 0, bx * W, by * H, rad);
@@ -381,7 +389,14 @@ function drawGlobals(t) {
     sy += (vnoise(u * 41 + s.t + 50) - 0.5) * 2 * s.amp * env;
     rot += (vnoise(u * 20 + s.t + 99) - 0.5) * 0.6 * env * (s.amp / 16);
   }
-  document.getElementById("shake").style.transform = `translate(${sx.toFixed(2)}px,${sy.toFixed(2)}px) rotate(${rot.toFixed(3)}deg)`;
+  let sc = 1;
+  for (const p of punches) {
+    const u = t - p.t;
+    if (u < 0 || u > p.dur) continue;
+    const k = u / p.dur;
+    sc += p.amt * (k < 0.25 ? k / 0.25 : Math.pow(1 - (k - 0.25) / 0.75, 2));
+  }
+  document.getElementById("shake").style.transform = `translate(${sx.toFixed(2)}px,${sy.toFixed(2)}px) rotate(${rot.toFixed(3)}deg) scale(${sc.toFixed(4)})`;
 
   // flash
   let fo = 0, fc = "#ffffff";
@@ -414,12 +429,6 @@ function drawGlobals(t) {
     stage.style.filter = "none";
   }
 
-  // HUD progress + timecode
-  const fill = document.querySelector("#hud .prog .fill");
-  fill.style.width = `${(100 * t / TL.duration).toFixed(3)}%`;
-  const s = Math.floor(t), ff = frame % fps;
-  const pad = (n) => String(n).padStart(2, "0");
-  document.getElementById("tc").textContent = `TC ${pad(Math.floor(s / 3600))}:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}:${pad(ff)}`;
 }
 
 /* ---------------------------------------------------------------- HUD ---- */
@@ -451,12 +460,6 @@ export async function init() {
   await Promise.all(fams.map((f) => document.fonts.load(f)));
   await document.fonts.ready;
   makeGrain();
-  // chapter ticks on the progress bar
-  const prog = document.querySelector("#hud .prog");
-  for (const [n, s] of Object.entries(TL.sections)) {
-    if (n === "open") continue;
-    put(prog, `<div class="tick" style="left:${(100 * s / TL.duration).toFixed(3)}%"></div>`);
-  }
   return TL;
 }
 

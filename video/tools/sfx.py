@@ -273,45 +273,85 @@ def block_fx(small=False, seed=28):
     return norm(reverb(stereo(softclip(x * 1.5, 1.2), 0, 0.3), 0.25, 1.8), 0.8 if small else 0.95)
 
 
-def build_library():
-    return {
-        "whoosh": whoosh(0.8), "whoosh_soft": whoosh(0.7, 400, 2500, 31) * 0.6, "whoosh_up": whoosh(1.1, 200, 6000, 32),
-        "impact": impact(False), "impact_big": impact(True), "braam": braam(False), "braam_soft": braam(True),
-        "tick": tick(), "tick_soft": tick(2400, 0.02, 33) * 0.6, "pop": pop(), "node": node(), "chip": stamp_fx(34) * 0.5,
-        "stair": stair(), "stamp": stamp_fx(), "typing": typing(), "counter": counter_fx(), "riser_short": riser(),
-        "elevator": whoosh(0.9, 200, 5000, 35) * 0.8, "ding": bell(88), "marker": marker(), "paper": paper(),
-        "scan": scan(), "clock_fast": clock_fast(), "flip_run": flip_run(), "fuse": fuse(), "glitch": glitch_fx(0.6, 36),
-        "glitch_short": glitch_fx(0.3, 37), "rewind": rewind(), "split": split(), "inflate": inflate(),
-        "dissolve": dissolve(), "lock": lock_fx(), "alert": alert(), "swell": swell(), "lens": lens_fx(),
-        "exhibit": exhibit_fx(), "twist": twist_fx(), "block": block_fx(False), "block_small": block_fx(True),
-    }
+def riser_v(d=1.6, seed=10):
+    """Noise + pitched riser, length and color vary with the seed."""
+    return riser(d, seed)
 
 
-LEVEL = {  # per-type trim (linear)
-    "impact": 0.55, "impact_big": 0.7, "braam": 0.65, "braam_soft": 0.45, "tick": 0.35, "tick_soft": 0.25,
-    "pop": 0.3, "node": 0.3, "chip": 0.3, "stair": 0.45, "stamp": 0.5, "typing": 0.35, "counter": 0.3,
-    "riser_short": 0.35, "elevator": 0.3, "ding": 0.25, "marker": 0.3, "paper": 0.35, "scan": 0.3,
-    "clock_fast": 0.4, "flip_run": 0.45, "fuse": 0.35, "glitch": 0.35, "glitch_short": 0.3, "rewind": 0.45,
-    "split": 0.45, "inflate": 0.35, "dissolve": 0.4, "lock": 0.45, "alert": 0.25, "swell": 0.35, "lens": 0.3,
-    "exhibit": 0.5, "twist": 0.6, "block": 0.6, "block_small": 0.45, "whoosh": 0.35, "whoosh_soft": 0.25, "whoosh_up": 0.35,
+# Each type has four variants built from different seeds/pitches/lengths, so a
+# repeated cue never plays the identical sample twice in a row.
+VARIANTS = {
+    "impact": lambda k: impact(False, 50 + k),
+    "impact_big": lambda k: impact(True, 60 + k),
+    "whoosh": lambda k: whoosh(0.6 + 0.12 * k, 250 + 80 * k, 3000 + 600 * k, 70 + k, -0.7 + 0.4 * k, 0.7 - 0.4 * k),
+    "riser": lambda k: riser_v(1.3 + 0.25 * k, 80 + k),
+    "swell": lambda k: swell(3.0 + 0.4 * k, 90 + k),
+    "stamp": lambda k: stamp_fx(100 + k),
+    "lock": lambda k: lock_fx(110 + k),
+    "paper": lambda k: paper(1.0 + 0.15 * k, 120 + k),
+    "counter": lambda k: counter_fx(1.0 + 0.2 * k),
 }
+LEVEL = {"impact": 0.5, "impact_big": 0.72, "whoosh": 0.32, "riser": 0.3, "swell": 0.3, "stamp": 0.45,
+         "lock": 0.42, "paper": 0.35, "counter": 0.22}
+BUDGET_PER_MIN, BIG_MAX, MIN_GAP, VARIANT_GAP = 6.5, 3, 1.5, 30.0
+
+
+def pitch_shift(x, semis):
+    """Resample-based pitch/speed shift (fine for one-shots)."""
+    if abs(semis) < 0.05:
+        return x
+    f = 2 ** (semis / 12)
+    n = int(len(x) / f)
+    idx = np.linspace(0, len(x) - 1, n)
+    return np.stack([np.interp(idx, np.arange(len(x)), x[:, c]) for c in range(x.shape[1])], 1).astype(np.float32)
+
+
+def tilt(x, amount):
+    """Gentle EQ tilt: +darker / -brighter."""
+    if amount > 0:
+        return (x * (1 - amount) + lp(x, 2500) * amount).astype(np.float32)
+    return (x * (1 + amount) + hp(x, 1200) * (-amount)).astype(np.float32)
+
+
+def thin(cues, duration):
+    """Enforce spacing and the per-minute budget; higher priority (then gain) wins."""
+    kept = []
+    for c in sorted(cues, key=lambda c: (-c.get("prio", 1), -c.get("gain", 1), c["t"])):
+        if any(abs(c["t"] - k["t"]) < MIN_GAP for k in kept):
+            continue
+        if c["type"] == "impact_big" and sum(k["type"] == "impact_big" for k in kept) >= BIG_MAX:
+            continue
+        if len(kept) >= BUDGET_PER_MIN * duration / 60:
+            continue
+        kept.append(c)
+    return sorted(kept, key=lambda c: c["t"])
 
 
 def main():
     tl = json.loads((BUILD / "timeline.json").read_text())
-    cues = json.loads((BUILD / "sfx_cues.json").read_text())
-    lib = build_library()
-    track = np.zeros((secs(tl["duration"]) + SR * 5, 2), np.float32)
-    missing = set()
+    cues = thin(json.loads((BUILD / "sfx_cues.json").read_text()), tl["duration"])
+    lib = {t: [norm(fn(k), 0.9) for k in range(4)] for t, fn in VARIANTS.items()}
+    r = np.random.default_rng(2026)
+    track = np.zeros((secs(tl["duration"]) + SR * 6, 2), np.float32)
+    rr, last_used, report = {}, {}, []
     for c in cues:
-        s = lib.get(c["type"])
-        if s is None:
-            missing.add(c["type"])
-            continue
-        place(track, s, c["t"], LEVEL.get(c["type"], 0.4) * c.get("gain", 1.0))
+        if c["type"] not in lib:
+            raise SystemExit(f"unknown sfx type {c['type']}")
+        k = rr.get(c["type"], 0)
+        rr[c["type"]] = (k + 1) % 4
+        key = (c["type"], k)
+        if key in last_used and c["t"] - last_used[key] < VARIANT_GAP:
+            raise SystemExit(f"variant {key} reused within {VARIANT_GAP}s at {c['t']}")
+        last_used[key] = c["t"]
+        x = tilt(pitch_shift(lib[c["type"]][k], r.uniform(-1.5, 1.5)), r.uniform(-0.3, 0.3))
+        place(track, x, c["t"], LEVEL[c["type"]] * c.get("gain", 1.0) * r.uniform(0.9, 1.05))
+        report.append((c["t"], c["type"], k))
     track = track[: secs(tl["duration"])]
     sf.write(BUILD / "sfx_track.wav", track, SR, subtype="FLOAT")
-    print(f"sfx: {len(cues)} cues, peak {np.max(np.abs(track)):.2f}, missing {sorted(missing)}")
+    (BUILD / "sfx_used.json").write_text(json.dumps([{"t": t, "type": ty, "variant": v} for t, ty, v in report]))
+    per_min = len(cues) / (tl["duration"] / 60)
+    print(f"sfx: {len(cues)} cues kept ({per_min:.1f}/min), "
+          f"big hits {sum(1 for c in cues if c['type'] == 'impact_big')}, peak {np.max(np.abs(track)):.2f}")
 
 
 if __name__ == "__main__":

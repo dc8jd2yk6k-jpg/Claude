@@ -1,189 +1,119 @@
-// Chapter 2 — "The Leak": the draft S-1, three numbers, the scary (wrong) math.
-export default function ch2(X) {
-  const { S, E, at, put, cput, inA, outA, to, set, setHTML, tl, scene, hit, glitch, flash, shake, cueSfx, during, counter, source, chapterLabel, typeOn, typeSeq, svgLayer, sv } = X;
-  const t0 = X.sec("ch2");
-  chapterLabel("02 — The leak", t0, X.sec("ch3") - 0.5);
-  to("#hud", t0 - 0.4, { opacity: 1, duration: 0.6 });
+// The leak (1:01–1:29): the draft S-1, three numbers, the 45-day panic math.
+import { statement, heroNumber, drift } from "./kit.js";
 
-  /* ---------- the document ---------- */
-  const tD0 = t0 - 2.4, tD1 = S("c2_1") + 0.2;
-  const D = scene("leak-doc", tD0, tD1, { fin: 0.6, fout: 0.3 });
-  const doc = cput(D.cam, `<div style="width:820px;height:1060px;background:#e9e4d8;color:#1b1916;border-radius:4px;padding:70px 76px;box-shadow:0 60px 140px rgba(0,0,0,.7);position:absolute;overflow:hidden">
-      <div style="font-family:'JetBrains Mono';font-size:15px;letter-spacing:.2em;color:#6b655b">UNITED STATES · SECURITIES AND EXCHANGE COMMISSION</div>
-      <div style="font-family:'Instrument Serif';font-size:88px;line-height:1;margin-top:34px">FORM S-1</div>
-      <div style="font-family:'JetBrains Mono';font-size:17px;letter-spacing:.16em;margin-top:14px">DRAFT REGISTRATION STATEMENT · CONFIDENTIAL</div>
-      <div style="height:2px;background:#1b1916;margin:32px 0 30px"></div>
-      <div class="rows"></div></div>`, 960, 600);
+export default function leak(X) {
+  const { S, E, at, atEnd, put, cput, inA, outA, to, set, setHTML, scene, hit, glitch, punch, cueSfx, counter, during, typeSeq, source, chapterLabel } = X;
+  const t0 = X.sec("leak");
+  chapterLabel("02 · The leak", t0, X.sec("phantom") - 0.3);
+
+  /* ---- l1: the document ---- */
+  const D = scene("leak-doc", t0 - 0.4, S("l2") - 0.05, { fin: 0.2, fout: 0.15 });
+  const doc = cput(D.cam, `<div style="width:760px;height:980px;background:#efeae0;color:#16140f;border-radius:6px;padding:64px 70px;box-shadow:0 60px 140px rgba(0,0,0,.7);position:absolute;overflow:hidden">
+      <div style="font-family:'JetBrains Mono';font-size:16px;letter-spacing:.2em;color:#6b655b">SECURITIES AND EXCHANGE COMMISSION</div>
+      <div style="font-family:'Instrument Serif';font-size:96px;line-height:1;margin-top:26px">FORM S-1</div>
+      <div style="font-family:'JetBrains Mono';font-size:18px;letter-spacing:.16em;margin-top:12px">DRAFT · CONFIDENTIAL</div>
+      <div style="height:3px;background:#16140f;margin:30px 0"></div><div class="rows"></div></div>`, 1240, 560);
   const rows = doc.querySelector(".rows");
-  const rr = X.rng(3);
-  const hl = [];
-  for (let i = 0; i < 17; i++) {
-    const row = put(rows, `<div style="display:flex;gap:10px;margin-bottom:17px;align-items:center"></div>`);
-    if (i === 4 || i === 8 || i === 12) {
-      const label = ["Total revenue", "Net loss", "Cash, cash equivalents and short-term investments"][(i - 4) / 4];
-      put(row, `<div style="font-family:'Inter Display';font-weight:600;font-size:21px">${label}</div>`);
-      put(row, `<div style="flex-grow:1;border-bottom:2px dotted #8a8478;height:14px"></div>`);
-      const v = put(row, `<div style="font-family:'JetBrains Mono';font-weight:700;font-size:21px;position:relative">${["$ 16,3••", "$ (80,7••)", "$ 20,28•"][(i - 4) / 4]}<div class="hl" style="position:absolute;left:-10px;right:-10px;top:-4px;bottom:-4px;background:rgba(255,74,61,.35);mix-blend-mode:multiply;transform-origin:0 50%"></div></div>`);
+  const rr = X.rng(3), hl = [];
+  for (let i = 0; i < 15; i++) {
+    const row = put(rows, `<div style="display:flex;gap:10px;margin-bottom:19px;align-items:center"></div>`);
+    if (i === 3 || i === 7 || i === 11) {
+      const k = (i - 3) / 4;
+      put(row, `<div style="font-family:'Inter Display';font-weight:700;font-size:24px">${["Revenue", "Net loss", "Cash & ST investments"][k]}</div>`);
+      put(row, `<div style="flex-grow:1;border-bottom:2px dotted #8a8478;height:16px"></div>`);
+      const v = put(row, `<div style="font-family:'JetBrains Mono';font-weight:700;font-size:24px;position:relative">${["16,3••", "(80,7••)", "20,28•"][k]}<div class="hl" style="position:absolute;left:-10px;right:-10px;top:-5px;bottom:-5px;background:rgba(255,74,61,.45);mix-blend-mode:multiply;transform-origin:0 50%"></div></div>`);
       hl.push(v.querySelector(".hl"));
     } else {
       let w = 0;
-      while (w < 640) {
+      while (w < 600) {
         const ww = 30 + rr() * 120;
-        const red = rr() < 0.12;
-        put(row, `<div style="width:${ww}px;height:12px;background:${red ? "#1b1916" : "rgba(27,25,22,.22)"};border-radius:2px"></div>`);
+        put(row, `<div style="width:${ww}px;height:13px;background:${rr() < 0.12 ? "#16140f" : "rgba(22,20,15,.22)"};border-radius:2px"></div>`);
         w += ww + 10;
       }
     }
   }
-  const ill = put(D.cam, `<div class="mono dim2" style="position:absolute;left:1420px;top:880px;font-size:15px;letter-spacing:.15em">ILLUSTRATION · NOT THE ACTUAL FILING</div>`);
-  inA(ill, tD0 + 1, "fade");
-  const asrep = put(D.cam, `<div style="position:absolute;left:120px;top:420px;width:420px">
-      <div class="mono red" style="font-size:22px;letter-spacing:.3em">● LEAKED / REPORTED</div>
-      <div class="serif ital" style="font-size:66px;line-height:1.05;margin-top:22px">The draft IPO filing</div>
-      <div class="mono dim" style="font-size:18px;letter-spacing:.14em;margin-top:24px;line-height:1.7">REUTERS · WSJ · FORTUNE<br>SEP 29 – OCT 20, 2026</div></div>`);
-  gsap.set(doc, { y: 700, rotation: 4, scale: 0.88 });
-  to(doc, tD0 + 0.3, { y: 0, rotation: -1.5, duration: 2.0, ease: "expo.out" });
-  cueSfx(tD0 + 0.3, "paper");
-  inA([...asrep.children], S("c2_0") + 0.1, "up", { dur: 0.8, stagger: 0.15 });
-  // scanning beam
-  const beam = put(doc, `<div style="position:absolute;left:0;right:0;top:0;height:120px;background:linear-gradient(180deg,rgba(255,74,61,0),rgba(255,74,61,.25),rgba(255,74,61,0))"></div>`);
-  gsap.set(beam, { y: -150 });
-  to(beam, S("c2_0") + 0.6, { y: 1100, duration: 2.4, ease: "power1.inOut" });
-  cueSfx(S("c2_0") + 0.6, "scan");
+  gsap.set(doc, { y: 760, rotation: 5 });
+  to(doc, D.t0, { y: 0, rotation: -2, duration: 1.0, ease: "expo.out" });
+  cueSfx(D.t0 + 0.05, "paper", 1, 1);
+  const tag = put(D.cam, `<div style="position:absolute;left:130px;top:360px;width:640px">
+      <div class="pill" style="font-size:28px;background:#ff4a3d;color:#07070a">● LEAKED</div>
+      <div class="hero" style="font-size:110px;margin-top:30px">The draft<br>IPO filing</div>
+      <div class="label" style="margin-top:26px">REUTERS · WSJ · FORTUNE</div></div>`);
+  inA([...tag.children], D.t0 + 0.2, "up", { dur: 0.5, stagger: 0.12 });
   hl.forEach((h, i) => {
     gsap.set(h, { scaleX: 0 });
-    const t = at("c2_0", "three numbers") + i * 0.35;
-    to(h, t, { scaleX: 1, duration: 0.35, ease: "power2.out" });
-    cueSfx(t, "marker", 0.7);
+    to(h, at("l1", "three numbers") + i * 0.22, { scaleX: 1, duration: 0.25 });
   });
-  to(D.cam, S("c2_0"), { scale: 1.12, x: 140, duration: E("c2_0") - S("c2_0") + 1.2, ease: "power1.inOut" });
+  to(D.cam, at("l1", "three numbers"), { scale: 1.12, x: -120, duration: 1.4, ease: "power2.inOut" });
+  const illus = put(D.cam, `<div class="label" style="position:absolute;left:1500px;top:1010px;font-size:16px">ILLUSTRATION</div>`);
+  inA(illus, D.t0 + 0.5, "fade");
 
-  /* ---------- the three numbers ---------- */
-  const tN0 = S("c2_1") - 0.2, tN1 = S("c2_5") - 0.2;
-  const N = scene("leak-numbers", tN0, S("c2_7") + 0.1, { fin: 0.2, fout: 0 });
+  /* ---- l2–l4: the three numbers ---- */
+  const N = scene("leak-numbers", S("l2") - 0.05, S("l5") - 0.05, { fin: 0.1, fout: 0.2 });
+  drift(X, N, 0.04);
   const cols = [
-    { x: 330, lab: "REVENUE · H1 2026", val: "+$16.3B", cls: "teal", sub: "VS $1.1B IN H1 2025", id: ["c2_1", "sixteen"] },
-    { x: 960, lab: "NET LOSS · H1 2026", val: "−$80.7B", cls: "red", sub: "VS ~$13B IN H1 2025", id: ["c2_2", "eighty"] },
-    { x: 1590, lab: "CASH + ST INVESTMENTS", val: "$20.28B", cls: "", sub: "AS OF DEC 31, 2025", id: ["c2_3", "twenty point"] },
+    { x: 330, lab: "REVENUE · H1 2026", sub: "vs $1.1B a year earlier", cls: "glow-mint", to: 16.3, sign: "+", w: ["l2", "sixteen"] },
+    { x: 960, lab: "NET LOSS · H1 2026", sub: "vs ~$13B a year earlier", cls: "glow-red", to: 80.7, sign: "−", w: ["l3", "eighty"] },
+    { x: 1590, lab: "CASH · DEC 31 2025", sub: "cash + short-term investments", cls: "", to: 20.28, sign: "", w: ["l4", "twenty point"] },
   ].map((c, i) => {
-    const e = cput(N.cam, `<div style="text-align:center;width:600px">
-        <div class="mono dim" style="font-size:22px;letter-spacing:.25em">${c.lab}</div>
-        <div class="disp black ${c.cls} num" style="font-size:${i === 1 ? 150 : 118}px;line-height:1.1;margin-top:16px;${i === 1 ? "text-shadow:0 0 60px rgba(255,74,61,.45)" : ""}">${c.val}</div>
-        <div class="mono dim2" style="font-size:18px;letter-spacing:.16em;margin-top:12px">${c.sub}</div></div>`, c.x, 540);
-    const t = at(c.id[0], c.id[1]) - 0.1;
-    inA(e, i === 0 ? tN0 + 0.2 : t - 0.3, "fade", { dur: 0.3 });
-    gsap.set(e.children[1], { opacity: 0, scale: 2.4 });
-    to(e.children[1], t, { opacity: 1, scale: 1, duration: 0.5, ease: "expo.out" });
+    const t = at(c.w[0], c.w[1]);
+    const lab = cput(N.cam, `<div class="label nowrap" style="font-size:26px;color:var(--ink)">${c.lab}</div>`, c.x, 400);
+    inA(lab, N.t0 + 0.1 + i * 0.15, "up", { dur: 0.35 });
+    const ph = cput(N.cam, `<div class="hero nowrap" style="font-size:110px;color:rgba(243,239,230,.12)">$???</div>`, c.x, 530);
+    inA(ph, N.t0 + 0.2 + i * 0.15, "fade", { dur: 0.3 });
+    to(ph, t - 0.1, { opacity: 0, duration: 0.1 });
+    const num = heroNumber(X, N.cam, { x: c.x, y: 530, size: i === 1 ? 160 : 128, cls: c.cls, t, from: 0, to: c.to,
+      fmt: (v) => `${c.sign}$${v.toFixed(i === 2 ? 2 : 1)}B`, dur: 0.6 });
+    const sub = cput(N.cam, `<div class="label" style="font-size:22px">${c.sub}</div>`, c.x, 650);
+    inA(sub, t + 0.4, "fade", { dur: 0.3 });
     if (i === 1) {
-      hit(t + 0.05, { amp: 30, peak: 0.6, color: "#ff4a3d" });
-      glitch(t, 0.45, 1);
-      cueSfx(t, "impact_big", 1.2);
+      hit(t + 0.05, { amp: 28, peak: 0.5, color: "#ff4a3d" });
+      glitch(t, 0.3, 1);
+      cueSfx(t - 0.04, "impact_big", 1, 3);
     } else {
-      hit(t + 0.05, { amp: 12, peak: 0.18 });
-      cueSfx(t, "impact", 0.9);
+      punch(t, 0.04);
+      cueSfx(t - 0.04, "impact", 0.6, 1);
     }
-    return e;
+    return { lab, num, sub };
   });
-  // flash of red tint on the loss
-  const tint = put(N.el, `<div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(255,74,61,.25),rgba(255,74,61,0) 60%)"></div>`);
-  gsap.set(tint, { opacity: 0 });
-  to(tint, at("c2_2", "eighty"), { opacity: 1, duration: 0.15 });
-  to(tint, at("c2_2", "eighty") + 0.4, { opacity: 0.35, duration: 1.5 });
-  source("REUTERS, WSJ (OCT 20, 2026); FORTUNE (SEP 29, 2026) — FROM THE DRAFT S-1", tN0, S("c2_7"));
-  // shrink to a header row for the math
-  const tUp = S("c2_4") - 0.1;
-  cols.forEach((c, i) => to(c, tUp, { y: -360, scale: 0.55, duration: 0.9, ease: "expo.inOut" }));
-  to(tint, tUp, { opacity: 0, duration: 0.6 });
-  cueSfx(tUp, "whoosh_soft");
+  source("Reuters, WSJ (Oct 20 2026); Fortune (Sep 29 2026) — draft S-1", N.t0 + 0.3, N.t1);
 
-  /* ---------- the scary math ---------- */
-  const M = scene("leak-math", S("c2_4") - 0.1, S("c2_7") - 0.1, { fin: 0.2, fout: 0.3 });
-  to(N.el, S("c2_7") - 0.4, { opacity: 0, duration: 0.3 });
-  const scary = cput(M.cam, `<div class="serif ital nowrap red" style="font-size:96px">Now do the scary math.</div>`, 960, 460);
-  inA(scary, S("c2_4"), "blur", { dur: 0.6 });
-  outA(scary, S("c2_5") - 0.2, "up", { dur: 0.4 });
-  const eq1 = cput(M.cam, `<div class="mono nowrap" style="font-size:58px;letter-spacing:.02em;text-transform:none"><span class="a">$80.7B ÷ 6 months = </span><span class="b red" style="font-weight:700">$13.45B / month</span></div>`, 960, 400);
-  typeSeq([eq1.querySelector(".a"), eq1.querySelector(".b")], S("c2_5") + 0.1, at("c2_5", "is about") - S("c2_5") + 0.3);
-  cueSfx(S("c2_5") + 0.1, "typing", 0.7);
-  const eq2 = cput(M.cam, `<div class="mono nowrap" style="font-size:58px;letter-spacing:.02em;text-transform:none"><span class="a">$20.28B ÷ $13.45B ≈ </span><span class="b red" style="font-weight:700">45 days</span></div>`, 960, 520);
-  typeSeq([eq2.querySelector(".a"), eq2.querySelector(".b")], S("c2_6") + 0.05, at("c2_6", "forty-five") - S("c2_6") + 0.3);
-  cueSfx(S("c2_6") + 0.05, "typing", 0.7);
-  // cash fuse
-  const fuse = put(M.cam, `<div style="position:absolute;left:360px;top:680px;width:1200px">
-      <div style="display:flex;justify-content:space-between" class="mono"><div class="dim" style="font-size:20px;letter-spacing:.2em">CASH REMAINING</div><div class="red days" style="font-size:24px;font-weight:700">45 DAYS</div></div>
-      <div style="margin-top:14px;height:44px;border:2px solid var(--ink3);border-radius:6px;padding:5px"><div class="f" style="height:100%;width:100%;background:linear-gradient(90deg,#ff4a3d,#ff8a5c);border-radius:3px"></div></div></div>`);
-  inA(fuse, at("c2_6", "twenty"), "up", { dur: 0.6 });
-  const fill = fuse.querySelector(".f"), days = fuse.querySelector(".days");
-  const tf = at("c2_6", "runs out");
-  to(fill, tf, { width: "0%", duration: E("c2_6") - tf + 0.6, ease: "power1.in" });
-  counter(days, tf, E("c2_6") - tf + 0.6, 45, 0, (v) => `${Math.ceil(v)} DAYS`, "power1.in");
-  cueSfx(tf, "clock_fast", 1);
+  /* ---- l5: the scary math ---- */
+  const M = scene("leak-math", S("l5") - 0.05, S("l6") - 0.05, { fin: 0.1, fout: 0.15 });
+  drift(X, M, 0.04);
+  const scary = cput(M.cam, `<div class="kicker" style="font-size:30px;color:#ff4a3d">THE SCARY MATH</div>`, 960, 220);
+  inA(scary, M.t0 + 0.05, "wipe", { dur: 0.4 });
+  const eq1 = cput(M.cam, `<div class="hero nowrap" style="font-size:100px"><span class="a">$80.7B ÷ 6 = </span><span class="b glow-red">$13.5B/mo</span></div>`, 960, 380);
+  inA(eq1.querySelector(".a"), M.t0 + 0.1, "up", { dur: 0.4 });
+  inA(eq1.querySelector(".b"), at("l5", "thirteen") - 0.05, "slam", { dur: 0.4 });
+  const fuse = put(M.cam, `<div style="position:absolute;left:260px;top:560px;width:1400px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline"><div class="label" style="font-size:30px;color:var(--ink)">$20B IN THE BANK</div><div class="hero num glow-red days" style="font-size:120px">45 DAYS</div></div>
+      <div style="margin-top:20px;height:70px;border:3px solid var(--ink3);border-radius:10px;padding:7px"><div class="f" style="height:100%;width:100%;background:linear-gradient(90deg,#ff4a3d,#ff9a5c);border-radius:5px"></div></div></div>`);
+  inA(fuse, at("l5", "at that rate") - 0.1, "up", { dur: 0.5 });
+  const tf = at("l5", "forty-five") - 0.1;
+  to(fuse.querySelector(".f"), tf, { width: "0%", duration: E("l5") - tf + 0.8, ease: "power1.in" });
+  counter(fuse.querySelector(".days"), tf, E("l5") - tf + 0.8, 45, 0, (v) => `${Math.ceil(v)} DAYS`, "power1.in");
+  punch(tf + 0.05, 0.04);
 
-  /* ---------- Valentine's Day ---------- */
-  const V = scene("leak-calendar", S("c2_7") - 0.1, S("c2_8") - 0.15, { fin: 0.2, fout: 0.25 });
-  const cal = cput(V.cam, `<div style="width:520px;height:600px;background:#efe9dc;border-radius:16px;overflow:hidden;box-shadow:0 50px 120px rgba(0,0,0,.6);color:#1b1916">
-      <div class="mono mon" style="height:110px;background:#ff4a3d;color:#fff;display:flex;align-items:center;justify-content:center;font-size:34px;letter-spacing:.3em;font-weight:700">JANUARY</div>
-      <div class="disp black day" style="font-size:300px;line-height:380px;text-align:center">1</div>
-      <div class="mono dim2 yr" style="text-align:center;font-size:24px;color:#6b655b;letter-spacing:.3em">2026</div></div>`, 700, 540);
-  inA(cal, V.t0, "up", { dur: 0.6 });
-  const dayEl = cal.querySelector(".day"), monEl = cal.querySelector(".mon");
+  /* ---- l6: Valentine's Day + the question ---- */
+  const V = scene("leak-val", S("l6") - 0.05, X.sec("phantom") - 0.05, { fin: 0.1, fout: 0.15 });
+  const cal = cput(V.cam, `<div style="width:520px;height:600px;background:#f2ede2;border-radius:18px;overflow:hidden;box-shadow:0 50px 120px rgba(0,0,0,.6);color:#16140f">
+      <div class="mono mon" style="height:120px;background:#ff4a3d;color:#fff;display:flex;align-items:center;justify-content:center;font-size:40px;letter-spacing:.3em;font-weight:700">JANUARY</div>
+      <div class="hero day" style="font-size:330px;line-height:420px;text-align:center">1</div></div>`, 620, 560);
+  inA(cal, V.t0, "up", { dur: 0.4 });
   const dd = { d: 0 };
-  const tFlip0 = S("c2_7") + 0.3, tFlip1 = at("c2_7", "valentine") - 0.1;
-  to(dd, tFlip0, { d: 44, duration: tFlip1 - tFlip0, ease: "power2.in" });
+  const tV = at("l6", "valentine");
+  to(dd, V.t0 + 0.15, { d: 44, duration: tV - V.t0 - 0.1, ease: "power2.in" });
+  const dayEl = cal.querySelector(".day"), monEl = cal.querySelector(".mon");
   during(V.t0, V.t1, () => {
     const n = Math.round(dd.d);
-    const jan = n < 31;
-    dayEl.textContent = String(jan ? n + 1 : n - 30);
-    monEl.textContent = jan ? "JANUARY" : "FEBRUARY";
+    dayEl.textContent = String(n < 31 ? n + 1 : n - 30);
+    monEl.textContent = n < 31 ? "JANUARY" : "FEBRUARY";
   });
-  cueSfx(tFlip0, "flip_run", 1);
-  const stamp = cput(V.cam, `<div class="stamp red" style="font-size:64px;transform:rotate(-10deg);background:rgba(11,10,9,.6)">OUT OF CASH?</div>`, 760, 560);
-  inA(stamp, tFlip1 + 0.15, "slam", { dur: 0.4 });
-  hit(tFlip1 + 0.2, { amp: 16, peak: 0.25, color: "#ff4a3d" });
-  cueSfx(tFlip1 + 0.15, "stamp", 1.2);
-  const vtxt = put(V.cam, `<div style="position:absolute;left:1100px;top:370px;width:700px">
-      <div class="mono dim" style="font-size:22px;letter-spacing:.25em">BY THAT LOGIC…</div>
-      <div class="serif ital" style="font-size:92px;line-height:1.04;margin-top:20px">dead by<br><span class="red">Valentine’s Day.</span></div></div>`);
-  inA([...vtxt.children], S("c2_7") + 0.2, "up", { dur: 0.8, stagger: 0.2 });
-
-  /* ---------- rocket or bomb ---------- */
-  const R = scene("leak-rocket-bomb", S("c2_8") - 0.15, X.sec("ch3") - 2.1, { fin: 0.15, fout: 0.1 });
-  const rsv = svgLayer(R.cam);
-  const div = sv("line", { x1: 960, x2: 960, y1: 160, y2: 920, stroke: "rgba(243,239,230,.2)", "stroke-width": 2 }, rsv);
-  inA(div, R.t0, "fade");
-  // rocket: a rising trajectory with a head
-  const path = sv("path", { d: "M 180 860 C 420 840 560 700 640 480 S 760 210 820 170", fill: "none", stroke: "#35d6a6", "stroke-width": 8, "stroke-linecap": "round", pathLength: 1 }, rsv);
-  X.draw(path, R.t0 + 0.1, at("c2_8", "rocket") - R.t0 + 0.4, "power2.in");
-  const head = sv("polygon", { points: "0,-22 16,18 -16,18", fill: "#35d6a6", opacity: 0 }, rsv);
-  set(head, at("c2_8", "rocket") + 0.65, { attr: { opacity: 1, transform: "translate(820 170) rotate(40)" } });
-  const rL = cput(R.cam, `<div class="disp black teal" style="font-size:120px">ROCKET</div>`, 520, 960);
-  inA(rL, R.t0 + 0.2, "up", { dur: 0.6 });
-  cueSfx(at("c2_8", "rocket") - 0.2, "whoosh_up");
-  // bomb: body + fuse + sparks
-  const bomb = sv("g", { transform: "translate(1440 520)", opacity: 0 }, rsv);
-  sv("circle", { cx: 0, cy: 40, r: 190, fill: "#1d1a17", stroke: "#ff4a3d", "stroke-width": 6 }, bomb);
-  sv("rect", { x: -50, y: -175, width: 100, height: 40, fill: "#2a2622", stroke: "#ff4a3d", "stroke-width": 5 }, bomb);
-  sv("path", { d: "M 0 -175 C 20 -260 120 -250 130 -320", fill: "none", stroke: "#ebc36b", "stroke-width": 7 }, bomb);
-  const spark = put(R.cam, `<canvas width="400" height="400" style="position:absolute;left:1370px;top:0px"></canvas>`);
-  const spx = spark.getContext("2d");
-  const tb = at("c2_8", "bomb") - 0.15;
-  set(bomb, tb, { attr: { opacity: 1 } });
-  X.tl.fromTo(bomb, { scale: 0.6, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.5, ease: "back.out(2)", immediateRender: false }, tb);
-  const bL = cput(R.cam, `<div class="disp black red" style="font-size:120px">BOMB</div>`, 1440, 960);
-  inA(bL, tb, "up", { dur: 0.6 });
-  cueSfx(tb, "fuse", 1);
-  during(tb, R.t1, (t) => {
-    spx.clearRect(0, 0, 400, 400);
-    const r = X.rng(Math.floor(t * 30));
-    for (let i = 0; i < 26; i++) {
-      const a = r() * Math.PI * 2, d = r() * 60;
-      spx.fillStyle = `rgba(255,${180 + Math.floor(r() * 70)},90,${(0.4 + r() * 0.6).toFixed(2)})`;
-      spx.fillRect(200 + Math.cos(a) * d, 200 + Math.sin(a) * d, 3, 3);
-    }
-  });
-  const qm = cput(R.cam, `<div class="disp black" style="font-size:200px;background:#0b0a09;padding:0 30px">?</div>`, 960, 520);
-  inA(qm, at("c2_8", "bomb") + 0.5, "pop", { dur: 0.5 });
-  to(R.cam, R.t0, { scale: 1.06, duration: R.t1 - R.t0, ease: "none" });
-  glitch(X.sec("ch3") - 2.5, 0.6, 1);
-  cueSfx(X.sec("ch3") - 2.5, "glitch", 1);
+  const stamp = cput(V.cam, `<div class="stamp" style="font-size:66px;color:#ff4a3d;transform:rotate(-10deg);background:rgba(7,7,10,.7)">DEAD?</div>`, 650, 600);
+  inA(stamp, tV + 0.1, "slam", { dur: 0.35 });
+  cueSfx(tV + 0.08, "stamp", 1, 2);
+  const why = cput(V.cam, `<div style="text-align:center"><div class="serif ital" style="font-size:96px;color:var(--ink2)">so…</div><div class="hero" style="font-size:150px">why isn’t it?</div></div>`, 1380, 540);
+  inA(why, at("l6", "why") - 0.15, "blur", { dur: 0.45 });
+  punch(at("l6", "why"), 0.05);
 }

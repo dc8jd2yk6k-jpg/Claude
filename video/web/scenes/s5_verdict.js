@@ -1,146 +1,123 @@
-// Chapter 5 — "Strong or fragile?": three lenses, bulls vs bears, why IPO.
-export default function ch5(X) {
-  const { S, E, at, put, cput, inA, outA, to, set, setHTML, tl, scene, hit, glitch, cueSfx, during, counter, source, chapterLabel, svgLayer, sv } = X;
-  const t0 = X.sec("ch5");
-  chapterLabel("05 — Strong or fragile?", t0, X.sec("outro") - 0.3);
+// Verdict (3:07–3:38) + end screen (3:38–3:49).
+import { statement, drift } from "./kit.js";
 
-  /* ---------- the question + three lenses ---------- */
-  const Q = scene("verdict-q", t0 - 0.4, S("c5_1") + 0.4, { fin: 0.3, fout: 0.3 });
-  const q = cput(Q.cam, `<div class="nowrap" style="text-align:center">
-      <span class="disp black teal a" style="font-size:190px;display:inline-block">STRONG</span>
-      <span class="serif ital dim b" style="font-size:150px;display:inline-block;margin:0 40px">or</span>
-      <span class="disp black red c" style="font-size:190px;display:inline-block">FRAGILE?</span></div>`, 960, 540);
-  inA(q.querySelector(".a"), t0 - 0.2, "right", { dur: 0.7 });
-  inA(q.querySelector(".b"), at("c5_0", "strong") + 0.2, "fade", { dur: 0.5 });
-  inA(q.querySelector(".c"), at("c5_0", "fragile") - 0.15, "left", { dur: 0.7 });
-  cueSfx(t0 - 0.2, "whoosh");
-  cueSfx(at("c5_0", "fragile") - 0.15, "impact", 0.8);
-  to(Q.cam, S("c5_1") - 0.2, { scale: 0.6, opacity: 0, duration: 0.6, ease: "power3.in" });
+export default function verdict(X) {
+  const { S, E, at, atEnd, put, cput, inA, outA, to, set, setHTML, scene, hit, punch, cueSfx, counter, during, sv, svgLayer, source, chapterLabel } = X;
+  const t0 = X.sec("verdict");
+  chapterLabel("05 · The verdict", t0, X.sec("end") - 0.3);
 
-  const LN = scene("verdict-lenses", S("c5_1") - 0.1, S("c5_5") - 0.15, { fin: 0.3, fout: 0.35 });
-  const lensDefs = [
-    { x: 400, n: "1", name: "INCOME STATEMENT", col: "#8fb3ff", id: "c5_2",
-      body: `<div class="disp black red" style="font-size:96px;line-height:1">−$80.7B</div><div class="serif ital" style="font-size:40px;margin-top:14px;line-height:1.1">success looks<br>like failure</div>` },
-    { x: 960, n: "2", name: "OPERATIONS", col: "#35d6a6", id: "c5_3",
-      body: `<svg width="250" height="120" viewBox="0 0 250 120"><path d="M5 110 C 80 105 130 90 170 50 S 230 10 245 6" fill="none" stroke="#35d6a6" stroke-width="7" stroke-linecap="round"/></svg><div class="mono teal" style="font-size:19px;letter-spacing:.12em;margin-top:10px;line-height:1.5">REVENUE COMPOUNDING<br>ADJ. OP. INCOME &gt; 0</div>` },
-    { x: 1520, n: "3", name: "COMMITMENTS", col: "#ff6a3d", id: "c5_4",
-      body: `<div class="disp black" style="font-size:100px;line-height:1;color:#ff6a3d">$518B</div><div class="serif ital" style="font-size:36px;margin-top:14px;line-height:1.1">due whether customers<br>show up or not</div>` },
-  ];
-  const lenses = lensDefs.map((L, i) => {
-    const e = cput(LN.cam, `<div style="width:480px;text-align:center">
-        <div class="ring" style="width:440px;height:440px;margin:0 auto;border-radius:220px;border:4px solid ${L.col};background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.08),rgba(11,10,9,.9) 60%);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 60px ${L.col}33">
-          <div class="body" style="opacity:0">${L.body}</div></div>
-        <div class="mono" style="font-size:20px;letter-spacing:.25em;margin-top:30px;color:${L.col}">LENS ${L.n}</div>
-        <div class="mono" style="font-size:26px;letter-spacing:.18em;margin-top:8px">${L.name}</div></div>`, L.x, 560);
-    inA(e, at("c5_1", "lens") - 0.4 + i * 0.12, "up", { dur: 0.7 });
-    cueSfx(at("c5_1", "lens") - 0.4 + i * 0.12, "node", 0.7);
-    return e;
-  });
-  lensDefs.forEach((L, i) => {
-    const t = S(L.id) - 0.1;
-    lenses.forEach((e, j) => to(e, t, { opacity: j === i ? 1 : 0.32, scale: j === i ? 1.1 : 0.94, duration: 0.6, ease: "power3.inOut" }));
-    to(lenses[i].querySelector(".body"), t + 0.3, { opacity: 1, duration: 0.5 });
-    cueSfx(t, "lens", 1);
-  });
-  const allOn = S("c5_5") - 0.9;
-  lenses.forEach((e) => to(e, allOn, { opacity: 1, scale: 1, duration: 0.5 }));
-
-  /* ---------- bulls vs bears ---------- */
-  const BB = scene("verdict-scale", S("c5_5") - 0.15, S("c5_7") - 0.15, { fin: 0.3, fout: 0.35 });
-  const bsv = svgLayer(BB.cam);
-  const PV = { x: 960, y: 300 }, ARM = 520;
-  sv("polygon", { points: `${PV.x - 60},${PV.y + 380} ${PV.x + 60},${PV.y + 380} ${PV.x + 10},${PV.y} ${PV.x - 10},${PV.y}`, fill: "#2a2622" }, bsv);
-  const beam = sv("g", {}, bsv);
-  sv("rect", { x: PV.x - ARM, y: PV.y - 8, width: ARM * 2, height: 16, rx: 8, fill: "#b9b2a4" }, beam);
-  sv("circle", { cx: PV.x, cy: PV.y, r: 20, fill: "#ebc36b" }, bsv);
-  const pans = [-1, 1].map((sgn) => {
-    const g = sv("g", {}, bsv);
-    sv("line", { x1: 0, y1: 0, x2: -150, y2: 160, stroke: "rgba(243,239,230,.4)", "stroke-width": 2 }, g);
-    sv("line", { x1: 0, y1: 0, x2: 150, y2: 160, stroke: "rgba(243,239,230,.4)", "stroke-width": 2 }, g);
-    sv("path", { d: "M -190 160 L 190 160 Q 160 200 0 200 Q -160 200 -190 160 Z", fill: sgn < 0 ? "#1d6b55" : "#7a2a20" }, g);
-    return g;
-  });
-  const bullsT = cput(BB.cam, `<div class="disp black teal" style="font-size:72px">BULLS</div>`, PV.x - ARM, 150);
-  const bearsT = cput(BB.cam, `<div class="disp black red" style="font-size:72px">BEARS</div>`, PV.x + ARM, 150);
-  inA(bullsT, BB.t0 + 0.1, "down");
-  inA(bearsT, S("c5_6") - 0.1, "down");
-  const chips = { "-1": [], "1": [] };
-  const chip = (sgn, txt, t) => {
-    const e = put(BB.cam, `<div class="mono nowrap" style="position:absolute;left:0;top:0;padding:10px 16px;font-size:19px;letter-spacing:.08em;background:${sgn < 0 ? "#0f2a22" : "#2c1210"};border:2px solid ${sgn < 0 ? "#35d6a6" : "#ff4a3d"}">${txt}</div>`);
-    chips[sgn].push({ e, t });
-    gsap.set(e, { opacity: 0 });
-    to(e, t, { opacity: 1, duration: 0.3 });
-    cueSfx(t, "chip", 0.8);
-  };
-  chip(-1, "≈15× YEAR-OVER-YEAR", at("c5_5", "growing") - 0.1);
-  chip(-1, "$65B RUN-RATE", at("c5_5", "almost anything") - 0.1);
-  chip(-1, "DEMAND > SUPPLY", at("c5_5", "demand") - 0.1);
-  chip(-1, "ADJ. OPERATING PROFIT", at("c5_5", "supply") + 0.2);
-  chip(1, "$518B FIXED BILL", at("c5_6", "fixed bill") - 0.1);
-  chip(1, "2 CUSTOMERS ≈ 20–25%", at("c5_6", "concentrated") - 0.1);
-  chip(1, "SUPPLIERS = RIVALS", at("c5_6", "rivals") - 0.2);
-  chip(1, "“WORTH $144B”", at("c5_6", "one hundred and forty") - 0.1);
-  // tilt: bulls first (left heavy), then bears catch up
-  const st = { a: 0 };
-  to(st, at("c5_5", "growing"), { a: -9, duration: 2.5, ease: "elastic.out(1,0.4)" });
-  to(st, at("c5_6", "fixed bill"), { a: 7, duration: 3.5, ease: "elastic.out(1,0.35)" });
-  to(st, at("c5_6", "one hundred and forty") + 1.0, { a: -1.5, duration: 2.5, ease: "elastic.out(1,0.3)" });
-  during(BB.t0, BB.t1, (t) => {
-    const a = st.a + Math.sin(t * 1.7) * 0.6;
-    beam.setAttribute("transform", `rotate(${a.toFixed(2)} ${PV.x} ${PV.y})`);
-    [-1, 1].forEach((sgn, k) => {
-      const r = (a * Math.PI) / 180;
-      const x = PV.x + sgn * ARM * Math.cos(r), y = PV.y + sgn * ARM * Math.sin(r);
-      pans[k].setAttribute("transform", `translate(${x.toFixed(1)} ${y.toFixed(1)})`);
-      chips[sgn].forEach((c, i) => {
-        c.e.style.transform = `translate(${(x - 150 + (i % 2) * 20).toFixed(1)}px, ${(y + 150 - 48 * (i + 1)).toFixed(1)}px)`;
-      });
-    });
-  });
-  // valuation range
-  const vr = put(BB.cam, `<div style="position:absolute;left:260px;top:800px;width:1400px;height:200px"></div>`);
-  const vsv = svgLayer(vr, 1400, 200);
-  const lx = (v) => 40 + (Math.log10(v / 100) / Math.log10(2500 / 100)) * 1320;
-  sv("line", { x1: lx(100), x2: lx(2500), y1: 80, y2: 80, stroke: "rgba(243,239,230,.25)", "stroke-width": 3 }, vsv);
-  const grad = sv("line", { x1: lx(144), x2: lx(2000), y1: 80, y2: 80, stroke: "url(#vg)", "stroke-width": 10, "stroke-linecap": "round", pathLength: 1 }, vsv);
-  const d2 = sv("defs", {}, vsv);
-  const lg2 = sv("linearGradient", { id: "vg", x1: 0, y1: 0, x2: 1, y2: 0 }, d2);
-  sv("stop", { offset: "0%", "stop-color": "#ff4a3d" }, lg2);
-  sv("stop", { offset: "100%", "stop-color": "#35d6a6" }, lg2);
-  const marks = [[144, "NEW CONSTRUCTS", "$144B"], [965, "SERIES H · MAY", "$965B"], [1500, "SOME INVESTORS", "~$1.5T"], [2000, "IPO TALK", "≤$2T"]];
-  const mg = marks.map(([v, a, b], i) => {
+  /* ---- v1: strong or fragile + valuation range ---- */
+  const Q = scene("ver-q", t0 - 0.05, S("v2") - 0.05, { fin: 0.1, fout: 0.15 });
+  drift(X, Q, 0.04);
+  const q = cput(Q.cam, `<div class="nowrap" style="text-align:center"><span class="hero glow-mint a" style="font-size:180px;display:inline-block">STRONG</span>
+      <span class="serif ital b" style="font-size:130px;display:inline-block;margin:0 36px;color:var(--ink2)">or</span>
+      <span class="hero glow-red c" style="font-size:180px;display:inline-block">FRAGILE?</span></div>`, 960, 330);
+  inA(q.querySelector(".a"), at("v1", "strong") - 0.1, "right", { dur: 0.4 });
+  inA(q.querySelector(".b"), at("v1", "or") - 0.1, "fade", { dur: 0.3 });
+  inA(q.querySelector(".c"), at("v1", "fragile") - 0.1, "left", { dur: 0.4 });
+  const vr = put(Q.cam, `<div style="position:absolute;left:160px;top:560px;width:1600px;height:320px"></div>`);
+  const vsv = svgLayer(vr, 1600, 320);
+  const lx = (v) => 60 + (Math.log10(v / 100) / Math.log10(2500 / 100)) * 1480;
+  const dd = sv("defs", {}, vsv);
+  const g2 = sv("linearGradient", { id: "vgr", x1: 0, y1: 0, x2: 1, y2: 0 }, dd);
+  sv("stop", { offset: "0%", "stop-color": "#ff4a3d" }, g2);
+  sv("stop", { offset: "100%", "stop-color": "#3de0b0" }, g2);
+  sv("line", { x1: lx(100), x2: lx(2500), y1: 140, y2: 140, stroke: "rgba(243,239,230,.25)", "stroke-width": 4 }, vsv);
+  const bar = sv("line", { x1: lx(144), x2: lx(2000), y1: 140, y2: 140, stroke: "url(#vgr)", "stroke-width": 16, "stroke-linecap": "round", pathLength: 1 }, vsv);
+  const tR = at("v1", "valuations") - 0.1;
+  X.draw(bar, tR, 1.2);
+  [[144, "$144B", "NEW CONSTRUCTS", 0], [965, "$965B", "MAY ROUND", 0.4], [2000, "$2T", "IPO TALK", 0.8]].forEach(([v, a, b, d]) => {
     const g = sv("g", { opacity: 0 }, vsv);
-    sv("circle", { cx: lx(v), cy: 80, r: 10, fill: "#f3efe6" }, g);
-    const t1 = sv("text", { x: lx(v), y: 50, "text-anchor": "middle", fill: "#f3efe6", "font-size": 26, "font-weight": 700 }, g);
-    t1.textContent = b;
-    const t2 = sv("text", { x: lx(v), y: 125, "text-anchor": "middle", fill: "rgba(243,239,230,.5)", "font-size": 16 }, g);
-    t2.textContent = a;
-    return g;
+    sv("circle", { cx: lx(v), cy: 140, r: 16, fill: "#f3efe6" }, g);
+    const ta = sv("text", { x: lx(v), y: 96, "text-anchor": "middle", fill: "#f3efe6", "font-size": 52, "font-weight": 800 }, g);
+    ta.textContent = a;
+    const tb = sv("text", { x: lx(v), y: 206, "text-anchor": "middle", fill: "rgba(243,239,230,.65)", "font-size": 24 }, g);
+    tb.textContent = b;
+    set(g, (v === 144 ? at("v1", "one hundred") : v === 2000 ? at("v1", "two trillion") : tR + 0.6) - 0.05, { attr: { opacity: 1 } });
   });
-  const tv = at("c5_6", "one research") - 0.2;
-  X.draw(grad, tv, 1.0);
-  mg.forEach((g, i) => set(g, tv + 0.2 + i * 0.25, { attr: { opacity: 1 } }));
-  const vlab = put(vr, `<div class="mono dim" style="position:absolute;left:40px;top:160px;font-size:17px;letter-spacing:.2em">WHAT IS IT WORTH? · VALUATION VIEWS, LOG SCALE</div>`);
-  inA(vlab, tv, "fade");
-  cueSfx(tv, "whoosh_soft");
-  source("REUTERS; THE NEXT WEB (NEW CONSTRUCTS); PITCHBOOK VIA MORNINGSTAR", BB.t0, BB.t1);
+  const lab = put(vr, `<div class="label" style="position:absolute;left:60px;top:260px;font-size:22px">WHAT IS IT WORTH? · VALUATION VIEWS · LOG SCALE</div>`);
+  inA(lab, tR + 0.3, "fade");
+  source("The Next Web (New Constructs); Orrick/Reuters; Reuters/Bloomberg", Q.t0 + 0.4, Q.t1);
 
-  /* ---------- why go public ---------- */
-  const IP = scene("verdict-ipo", S("c5_7") - 0.15, X.sec("outro") - 0.2, { fin: 0.3, fout: 0.4 });
-  const ocean = cput(IP.cam, `<div style="width:300px;height:300px;border-radius:150px;background:radial-gradient(circle,#2e5f8a 0%,#173149 55%,rgba(23,49,73,0) 72%)"></div>`, 1180, 560);
-  const pond = cput(IP.cam, `<div style="width:150px;height:150px;border-radius:75px;background:radial-gradient(circle,#d97757 0%,#7a3a24 60%,rgba(0,0,0,0) 72%)"></div>`, 420, 560);
-  const pl = cput(IP.cam, `<div class="mono nowrap" style="font-size:20px;letter-spacing:.2em">PRIVATE ROUNDS</div>`, 420, 690);
-  const ol = cput(IP.cam, `<div class="mono nowrap" style="font-size:26px;letter-spacing:.25em">PUBLIC MARKETS</div>`, 1180, 560);
-  inA([pond, pl], IP.t0 + 0.1, "pop", { dur: 0.6 });
-  const tPub = at("c5_7", "going public") - 0.2;
-  inA(ocean, tPub, "pop", { dur: 0.6 });
-  inA(ol, tPub + 0.2, "fade");
-  to(ocean, tPub + 0.4, { scale: 3.2, duration: E("c5_7") - tPub + 1, ease: "power2.inOut" });
-  cueSfx(tPub, "swell", 1);
-  const ipoT = put(IP.cam, `<div style="position:absolute;left:160px;top:170px">
-      <div class="mono clay" style="font-size:24px;letter-spacing:.3em">WHY GO PUBLIC?</div>
-      <div class="serif ital nowrap" style="font-size:84px;line-height:1.05;margin-top:16px">the deepest pool of<br>capital on Earth</div></div>`);
-  inA([...ipoT.children], at("c5_7", "deepest") - 0.6, "up", { dur: 0.8, stagger: 0.15 });
-  const nov = put(IP.cam, `<div class="mono dim" style="position:absolute;left:160px;top:880px;font-size:20px;letter-spacing:.2em">LISTING TARGETED FOR NOVEMBER 2026, PER REUTERS</div>`);
-  inA(nov, tPub + 0.5, "fade");
+  /* ---- v2–v5: the three numbers, relabelled ---- */
+  const N = scene("ver-numbers", S("v2") - 0.05, S("v6") - 0.05, { fin: 0.1, fout: 0.2 });
+  drift(X, N, 0.04);
+  const hdr = cput(N.cam, `<div class="kicker" style="font-size:28px;color:var(--ink2)">THE THREE NUMBERS, AGAIN</div>`, 960, 230);
+  inA(hdr, N.t0 + 0.05, "wipe", { dur: 0.4 });
+  [
+    { x: 330, v: "+$16.3B", cls: "glow-mint", old: "REVENUE", neu: "REAL DEMAND", col: "#3de0b0", id: "v3", w: "real demand" },
+    { x: 960, v: "−$80.7B", cls: "glow-red", old: "NET LOSS", neu: "MOSTLY THE PRICE<br>OF SUCCESS", col: "#6f9bff", id: "v4", w: "mostly" },
+    { x: 1590, v: "$20.28B", cls: "", old: "CASH", neu: "A SNAPSHOT,<br>NOT A RUNWAY", col: "#ffc857", id: "v5", w: "a snapshot" },
+  ].forEach((d, i) => {
+    const e = cput(N.cam, `<div style="text-align:center;width:600px">
+        <div class="hero num ${d.cls}" style="font-size:${i === 1 ? 150 : 128}px">${d.v}</div>
+        <div class="label lab" style="font-size:30px;margin-top:22px;line-height:1.4;min-height:90px">${d.old}</div></div>`, d.x, 540);
+    inA(e, N.t0 + 0.15 + i * 0.12, "up", { dur: 0.45 });
+    const l = e.querySelector(".lab"), t = at(d.id, d.w) - 0.1;
+    setHTML(l, t, d.neu);
+    to(l, t, { color: d.col, duration: 0.3 });
+    to(e, t, { scale: 1.1, duration: 0.35, ease: "back.out(2)" });
+    to(e, t + 0.5, { scale: 1, duration: 0.5 });
+    if (i === 1) {
+      const strip = put(e, `<div style="margin:18px auto 0;width:440px;height:24px;display:flex;border-radius:5px;overflow:hidden">
+          <div style="width:${(72 / 80.7) * 100}%;background:repeating-linear-gradient(45deg,rgba(111,155,255,.7) 0 9px,rgba(111,155,255,.18) 9px 18px)"></div><div style="flex-grow:1;background:#ff4a3d"></div></div>`);
+      inA(strip, t + 0.25, "wipe", { dur: 0.5 });
+    }
+  });
+
+  /* ---- v6: going public ---- */
+  const IP = scene("ver-ipo", S("v6") - 0.05, S("v7") - 0.05, { fin: 0.1, fout: 0.15 });
+  const ocean = cput(IP.cam, `<div style="width:340px;height:340px;border-radius:170px;background:radial-gradient(circle,#3f86d6 0%,#1a3e6b 55%,rgba(26,62,107,0) 72%)"></div>`, 1180, 560);
+  const pond = cput(IP.cam, `<div style="width:150px;height:150px;border-radius:75px;background:radial-gradient(circle,#ff8a5c 0%,#9a3a20 60%,rgba(0,0,0,0) 72%)"></div>`, 420, 600);
+  const pl = cput(IP.cam, `<div class="label" style="font-size:24px">PRIVATE ROUNDS</div>`, 420, 720);
+  const ol = cput(IP.cam, `<div class="hero" style="font-size:64px">PUBLIC MARKETS</div>`, 1180, 560);
+  inA([pond, pl], IP.t0, "pop", { dur: 0.4 });
+  const tPub = at("v6", "going public") - 0.15;
+  inA(ocean, tPub, "pop", { dur: 0.45 });
+  inA(ol, tPub + 0.15, "fade", { dur: 0.3 });
+  to(ocean, tPub + 0.3, { scale: 3.4, duration: E("v6") - tPub + 0.6, ease: "power2.inOut" });
+  const t1 = put(IP.cam, `<div style="position:absolute;left:140px;top:170px"><div class="kicker">WHY GO PUBLIC?</div>
+      <div class="serif ital nowrap" style="font-size:96px;line-height:1.02;margin-top:14px">the deepest pool of<br>capital on Earth</div></div>`);
+  inA([...t1.children], at("v6", "deepest") - 0.4, "up", { dur: 0.45, stagger: 0.12 });
+  const nov = put(IP.cam, `<div class="label" style="position:absolute;left:140px;top:900px;font-size:22px">LISTING TARGETED FOR NOVEMBER 2026, PER REUTERS</div>`);
+  inA(nov, tPub + 0.4, "fade");
+  cueSfx(tPub, "swell", 0.8, 2);
+
+  /* ---- v7: the closing line ---- */
+  const C = scene("ver-close", S("v7") - 0.05, X.sec("end") - 0.05, { fin: 0.1, fout: 0.2 });
+  drift(X, C, 0.05);
+  const l1 = cput(C.cam, `<div class="hero nowrap" style="font-size:110px">Anthropic’s strength is <span class="glow-mint">real.</span></div>`, 960, 260);
+  const l2 = cput(C.cam, `<div class="hero nowrap" style="font-size:110px">So is <span class="glow-hot">the bill.</span></div>`, 960, 400);
+  inA(l1, S("v7") - 0.05, "up", { dur: 0.45 });
+  inA(l2, at("v7", "so is") - 0.1, "up", { dur: 0.45 });
+  const csv = svgLayer(C.cam);
+  const p1 = sv("path", { d: "M 200 1000 C 700 980 1000 920 1300 840 S 1600 760 1700 720", fill: "none", stroke: "#3de0b0", "stroke-width": 8, "stroke-linecap": "round", pathLength: 1 }, csv);
+  const p2 = sv("path", { d: "M 200 980 C 700 970 1000 940 1300 830 S 1600 690 1700 670", fill: "none", stroke: "#ff5a36", "stroke-width": 8, "stroke-linecap": "round", "stroke-dasharray": "1 1", pathLength: 1 }, csv);
+  const tq = at("v7", "the only") - 0.1;
+  X.draw(p1, tq, 2.4, "power2.inOut");
+  X.draw(p2, tq + 0.1, 2.4, "power2.inOut");
+  const la = sv("text", { x: 1720, y: 730, fill: "#3de0b0", "font-size": 28, opacity: 0 }, csv);
+  la.textContent = "STRENGTH";
+  const lb = sv("text", { x: 1720, y: 676, fill: "#ff5a36", "font-size": 28, opacity: 0 }, csv);
+  lb.textContent = "THE BILL";
+  set([la, lb], tq + 2.4, { attr: { opacity: 1 } });
+  const which = cput(C.cam, `<div class="serif ital nowrap" style="font-size:110px">Which one grows faster?</div>`, 960, 590);
+  inA(which, at("v7", "which one") - 0.1, "blur", { dur: 0.5 });
+  punch(at("v7", "which one"), 0.05);
+
+  /* ---- end screen (YouTube end-screen-safe) ---- */
+  const tE = X.sec("end");
+  to("#hud", tE - 0.3, { opacity: 0, duration: 0.3 });
+  const EC = scene("endscreen", tE - 0.05, X.TL.duration + 0.1, { fin: 0.3, fout: 0 });
+  const ttl = cput(EC.cam, `<div class="nowrap" style="text-align:center"><span class="hero glow-hot" style="font-size:90px">$80 BILLION</span> <span class="serif ital" style="font-size:96px">Paradox</span></div>`, 960, 150);
+  inA(ttl, tE, "up", { dur: 0.5 });
+  [520, 1400].forEach((x, i) => {
+    const box = cput(EC.cam, `<div style="width:760px;height:428px;border:3px dashed rgba(243,239,230,.25);border-radius:16px;display:flex;align-items:center;justify-content:center">
+        <div class="label" style="font-size:24px;color:var(--ink3)">${i ? "BEST FOR YOU" : "WATCH NEXT"}</div></div>`, x, 520);
+    inA(box, tE + 0.2 + i * 0.12, "up", { dur: 0.5 });
+  });
+  const sub = cput(EC.cam, `<div class="pill" style="font-size:40px;background:#ff3d3d;color:#fff;padding:18px 44px">SUBSCRIBE</div>`, 960, 820);
+  inA(sub, at("e1", "subscribe") - 0.1, "pop", { dur: 0.45 });
+  const fine = cput(EC.cam, `<div class="label" style="font-size:18px;text-align:center;line-height:1.7">FIGURES FROM PRESS REPORTS OF A DRAFT, UNAUDITED S-1 · SEP–OCT 2026 · SOURCES IN THE DESCRIPTION<br>INDEPENDENT EXPLAINER · NOT AFFILIATED WITH ANTHROPIC · NOT INVESTMENT ADVICE · AI NARRATION</div>`, 960, 980);
+  inA(fine, tE + 0.6, "fade", { dur: 0.6 });
 }
